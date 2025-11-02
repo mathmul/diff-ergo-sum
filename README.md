@@ -1,12 +1,14 @@
 # Diff, Ergo Sum
 
-The goal of this project is to implement a diffing API that can be used to compare two files and return the differences between them.
+The goal of this project is to implement a diffing API that compares two files and returns their differences.
 
-See [assignment details PDF](assignment.pdf) for more information.
+See assignment details for more information: [PDF](assignment.pdf)
 
-The project is implemented in C# using .NET 8.0 and follows the [Clean Architecture](https://www.martinfowler.com/bliki/CleanArchitecture.html) principles and [TDD](https://en.wikipedia.org/wiki/Test-driven_development).
+The project is implemented in C# using .NET 8.0 and follows:
+- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Test-Driven Development (TDD)](https://en.wikipedia.org/wiki/Test-driven_development)
 
-## Project structure
+## Project Structure
 
 ```
 DiffErgoSum.Tests/
@@ -51,12 +53,12 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 
 ### Implementation
 
-- [ ] Add API health endpoint test
-- [ ] Add API health endpoint
-- [ ] Add diff service test
-- [ ] Add diff service
-- [ ] Add diff endpoint test
-- [ ] Add diff endpoint
+- [ ] Add `ApiHealthTest` (`/api/health` sanity check)
+- [ ] Implement API health endpoint
+- [ ] Add `DiffServiceTests` (unit tests for diffing logic)
+- [ ] Implement diff service
+- [ ] Add `DiffEndpointsTests` (integration-level)
+- [ ] Implement diff endpoints
 
 ## Initial setup done
 

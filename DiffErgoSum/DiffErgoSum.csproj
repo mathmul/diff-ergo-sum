@@ -17,4 +17,8 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DiffErgoSum.Tests" />
+  </ItemGroup>
+
 </Project>

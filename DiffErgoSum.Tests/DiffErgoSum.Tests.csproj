@@ -24,4 +24,8 @@
     <ProjectReference Include="..\DiffErgoSum\DiffErgoSum.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.20" />
+  </ItemGroup>
+
 </Project>
