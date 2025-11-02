@@ -33,6 +33,9 @@ public class DiffController : ControllerBase
         return Created(string.Empty, null);
     }
 
+    /// <summary>
+    /// Compares the left and right base64 inputs and returns their diff result.
+    /// </summary>
     [HttpGet]
     public IActionResult GetDiff(int id)
     {

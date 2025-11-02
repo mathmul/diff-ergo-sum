@@ -1,10 +1,28 @@
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+    c.SwaggerDoc("v1", new()
+    {
+        Title = "Diff Ergo Sum API",
+        Version = "v1",
+        Description = "A diffing service that compares two base64-encoded inputs and reports offsets and lengths of differing segments.",
+        Contact = new()
+        {
+            Name = "@mathmul",
+            Url = new Uri("https://github.com/mathmul/diff-ergo-sum")
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -12,7 +30,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Diff Ergo Sum API v1");
+        c.RoutePrefix = "docs";
+    });
 }
 
 app.UseHttpsRedirection();

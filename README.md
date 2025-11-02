@@ -52,28 +52,84 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 - [x] Add .editorconfig
 - [x] Add pre-commit hook
 
-### Implementation
+### Implementation (TDD)
 
 - [x] Add `ApiHealthTest` (`/api/health` sanity check)
 - [x] Implement API health endpoint
 - [x] Add `DiffServiceTests` (unit tests for diffing logic)
-- [x] Implement diff service
-- [ ] Add `DiffEndpointsTests` (integration-level)
-- [ ] Implement diff endpoints
+- [x] Implement diff service (Equals, SizeDoNotMatch, ContentDoNotMatch)
+- [x] Add `DiffEndpointsTests` (integration-level, /api/v1/diff/{id}/left|right|get)
+- [x] Implement diff endpoints using in-memory storage
+- [ ] Add input/data validation tests (null / missing `data` / invalid base64)
+- [ ] Implement explicit validation + 4xx responses (match PDF assignment)
+- [ ] Add tests to cover **all** cases from the PDF sample (1–10)
+- [ ] Add tests for “right exists, left missing” and vice versa (should 404)
+- [ ] Add tests for malformed JSON bodies
 
 ### Technical Debt / Future Refactor
 
-Temporary test hooks (e.g., ResetRepository) exist to support isolated TDD runs.
-These must not exist in production builds. Once dependency injection (DI) is introduced,
-the InMemoryDiffRepository should be replaced by an injected instance (e.g., AddSingleton)
-and test environments should get their own scoped or transient repository.
+Temporary test hooks (e.g. `ResetRepository`) exist to support isolated TDD runs.
+These must **not** exist in production builds. Once DI is introduced, the in-memory
+repository should be registered via DI and test envs should get their own instance.
 
 - [x] Temporary static repository for in-memory storage
-- [x] Temporary ResetRepository() used in tests for state isolation
+- [x] Temporary `ResetRepository()` used in tests for state isolation
 - [ ] Refactor to use proper DI-based repository lifetime management
-- [ ] Register InMemoryDiffRepository via DI in Program.cs (AddSingleton or AddScoped)
-- [ ] Remove static instance and ResetRepository() helper before production
-- [ ] Replace manual repository instantiation with constructor injection in DiffController
+- [ ] Register `InMemoryDiffRepository` via DI in `Program.cs` (`AddSingleton` or `AddScoped`)
+- [ ] Remove static instance and `ResetRepository()` helper before production
+- [ ] Replace manual repo instantiation in `DiffController` with constructor injection
+- [ ] Consider splitting layers into separate projects if "assignment" grows
+- [ ] Replace or extend to InMemoryDiffRepository:
+      - **PostgreSQL** — for long-term persistence and auditability (with EF Core or Dapper + migrations)
+      - **Redis** — for high-volume, repeated requests or temporary caching (hash per `diff:{id}`)
+      - **Filesystem / Object Storage** — for large binary payloads or archival
+      - **SQLite** — for lightweight, embedded setups or demos
+- [ ] Introduce an `IDiffRepository` interface to enforce dependency inversion — controllers and services depend only on the abstraction, not the implementation
+- [ ] Provide schema or configuration for the chosen backend (SQL migrations or Redis setup)
+- [ ] Add integration tests for the persistent repository implementation
+- [ ] Make repository implementation configurable via environment variables (e.g., `STORAGE=postgres|redis|memory`)
+
+### Error Handling / API UX
+
+- [ ] Explicit error responses (HTTP status codes)
+- [ ] Standardize error shape (e.g. `{ "error": "InvalidBase64", "message": "..." }`)
+- [ ] Catch expected exceptions (eg. `FormatException` from `Convert.FromBase64String`) and return 422 with message
+- [ ] Add tests for invalid base64 on GET (stored bad data)
+- [ ] Document error responses in README and/or OpenAPI
+
+### Testing Strategy
+
+- [ ] Cover every example from the assignment PDF (10-step sample)
+- [ ] Add regression test for "same size but multiple contiguous diffs"
+- [ ] Consider property-based testing for diff logic
+  - e.g. generate two byte arrays of same length → diffs must be non-overlapping and ordered
+  - e.g. when arrays are identical → always `Equals`
+  - e.g. when lengths differ → always `SizeDoNotMatch`
+- [ ] Consider base64 roundtrip tests (store → decode → diff)
+
+### Tooling / DevEx
+
+- [ ] Dockerize the project (multi-stage build, `dotnet publish`)
+- [ ] Add "Getting Started" section to README (local run + docker run)
+- [ ] Add `.github/workflows/dotnet.yml` to run `dotnet build` + `dotnet test` on PRs
+- [ ] (Perhaps) Add `dotnet format` to CI to enforce style
+
+### API Documentation (Swagger)
+
+- [x] Add OpenAPI for dev environment (`.AddSwaggerGen`)
+- [x] Restrict Swagger UI to development environment
+- [x] Add Swagger metadata (`.SwaggerDoc`: title, version, description, contact)
+- [x] Enable XML comments for automatic endpoint documentation (csproj)
+- [ ] Document all endpoints with XML comments
+- [x] Move Swagger UI to /docs for clarity
+- [ ] Harden Swagger for production (protect route / authorization)
+- [ ] Optionally publish Swagger JSON to CI/CD artifacts for API client generation
+
+### Nice to Have
+
+- [x] Add versioning note (`/api/v1/...`)
+- [ ] Add example `curl` requests to README
+- [ ] Add notes on assumptions (in-memory only, no persistence, not thread-safe for prod)
 
 ## Initial setup done
 
