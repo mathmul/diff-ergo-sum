@@ -5,12 +5,13 @@ The goal of this project is to implement a diffing API that compares two files a
 See assignment details for more information: [PDF](assignment.pdf)
 
 The project is implemented in C# using .NET 8.0 and follows:
+
 - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [Test-Driven Development (TDD)](https://en.wikipedia.org/wiki/Test-driven_development)
 
 ## Project Structure
 
-```
+```bash
 DiffErgoSum.Tests/
 ├── ApiHealthTest.cs             # sanity / environment test
 ├── DiffServiceTests.cs          # unit tests for core logic
@@ -32,10 +33,10 @@ When you first clone the repository, the pre-commit hook is **not enabled by def
 See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions.
 
 ### What the hook does
+
 - Optionally auto-formats staged `*.cs` files and re-stages them (if the `<AUTO-FORMAT>` block is uncommented)
 - Verifies that all staged `*.cs` files are properly formatted according to `.editorconfig`
 - Aborts the commit if formatting issues are found
-
 
 ## TODO
 
@@ -53,10 +54,10 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 
 ### Implementation
 
-- [ ] Add `ApiHealthTest` (`/api/health` sanity check)
-- [ ] Implement API health endpoint
-- [ ] Add `DiffServiceTests` (unit tests for diffing logic)
-- [ ] Implement diff service
+- [x] Add `ApiHealthTest` (`/api/health` sanity check)
+- [x] Implement API health endpoint
+- [x] Add `DiffServiceTests` (unit tests for diffing logic)
+- [x] Implement diff service
 - [ ] Add `DiffEndpointsTests` (integration-level)
 - [ ] Implement diff endpoints
 
@@ -163,5 +164,3 @@ info: Microsoft.Hosting.Lifetime[0]
 info: Microsoft.Hosting.Lifetime[0]
       Content root path: /Users/s3c/dev/github.com/mathmul/diff-ergo-sum/DiffErgoSum
 ```
-
-##

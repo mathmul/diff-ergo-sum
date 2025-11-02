@@ -3,39 +3,36 @@ using System.Net.Http.Json;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
-using Xunit;
+namespace DiffErgoSum.Tests;
 
-namespace DiffErgoSum.Tests
+public class ApiHealthTest : IClassFixture<WebApplicationFactory<Program>>
 {
-    public class ApiHealthTest : IClassFixture<WebApplicationFactory<Program>>
+    private readonly HttpClient _client;
+
+    public ApiHealthTest(WebApplicationFactory<Program> factory)
     {
-        private readonly HttpClient _client;
+        _client = factory.CreateClient();
+    }
 
-        public ApiHealthTest(WebApplicationFactory<Program> factory)
-        {
-            _client = factory.CreateClient();
-        }
+    [Fact]
+    public async Task GetHealthEndpoint_ShouldReturnOkTrue()
+    {
+        // Arrange
+        var url = "/api/health";
 
-        [Fact]
-        public async Task GetHealthEndpoint_ShouldReturnOkTrue()
-        {
-            // Arrange
-            var url = "/api/health";
+        // Act
+        var response = await _client.GetAsync(url);
 
-            // Act
-            var response = await _client.GetAsync(url);
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<HealthResponse>();
+        Assert.NotNull(body);
+        Assert.True(body!.Ok);
+    }
 
-            var body = await response.Content.ReadFromJsonAsync<HealthResponse>();
-            Assert.NotNull(body);
-            Assert.True(body!.Ok);
-        }
-
-        private class HealthResponse
-        {
-            public bool Ok { get; set; }
-        }
+    private class HealthResponse
+    {
+        public bool Ok { get; set; }
     }
 }
