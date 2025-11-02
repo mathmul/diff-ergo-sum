@@ -1,3 +1,5 @@
+using DiffErgoSum.Controllers.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiffErgoSum.Controllers
@@ -7,9 +9,10 @@ namespace DiffErgoSum.Controllers
     public class HealthController : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(typeof(HealthResponse), StatusCodes.Status200OK)]
         public IActionResult Get()
         {
-            return Ok(new { ok = true });
+            return Ok(new HealthResponse());
         }
     }
 }
