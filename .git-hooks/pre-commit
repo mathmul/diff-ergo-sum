@@ -18,28 +18,37 @@
 
 set -e  # stop on first error
 
+echo "### pre-commit ###"
+
 # Get staged C# files (that are added or modified)
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.cs$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "    No staged C# files. Skipping format check."
+  exit 0
+fi
 
 # ---------------------------
 # AUTO-FORMAT
 # ---------------------------
-# if [ -n "$STAGED_FILES" ]; then
-#   echo "### pre-commit ### - Formatting staged files..."
-#   dotnet format --verbosity quiet --include $STAGED_FILES
-#
-#   echo "### pre-commit ### - Restaging any file that changed during formatting..."
-#   git add $STAGED_FILES
+# echo "    Running formatter..."
+# dotnet format --verbosity quiet --include $STAGED_FILES || true
+# echo "    Files modified after formatting:"
+# MODIFIED_FILED=$(git diff --name-only $STAGED_FILES || true)
+# if [ -n "$MODIFIED_FILED" ]; then
+#   echo "$MODIFIED_FILED" | sed 's/^/        - /'
+#   echo "    Restaging modified files..."
+#   git add $MODIFIED_FILED
+# else
+#   echo "        [None]"
 # fi
 # ---------------------------
 
-if [ -n "$STAGED_FILES" ]; then
-  echo "### pre-commit ### - Verifying code formatting..."
-  if ! dotnet format --verify-no-changes --verbosity quiet --include $STAGED_FILES; then
-    echo "❌ Code not formatted correctly."
-    echo "   Run 'dotnet format' to fix formatting issues before committing."
+echo "    Verifying code formatting..."
+if ! dotnet format --verify-no-changes --verbosity quiet --include $STAGED_FILES; then
+    echo "    ❌  Code not formatted correctly."
+    echo "        Run 'dotnet format' to fix formatting issues before committing."
     exit 1
-  fi
 fi
 
-echo "### pre-commit ### - Formatting verified. Proceeding with commit."
+echo "    Formatting verified. Proceeding with commit."
