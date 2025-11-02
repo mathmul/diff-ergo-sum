@@ -1,5 +1,65 @@
 # Diff, Ergo Sum
 
+The goal of this project is to implement a diffing API that can be used to compare two files and return the differences between them.
+
+See [assignment details PDF](assignment.pdf) for more information.
+
+The project is implemented in C# using .NET 8.0 and follows the [Clean Architecture](https://www.martinfowler.com/bliki/CleanArchitecture.html) principles and [TDD](https://en.wikipedia.org/wiki/Test-driven_development).
+
+## Project structure
+
+```
+DiffErgoSum.Tests/
+├── ApiHealthTest.cs             # sanity / environment test
+├── DiffServiceTests.cs          # unit tests for core logic
+└── IntegrationTests/            #
+    └── DiffEndpointsTests.cs    # full flow
+
+DiffErgoSum
+│ # LAYER             # DEPENDS ON            # NOTES
+├── Domain            # /                     # Core business rules; pure logic.
+├── Application       # Domain                # Uses domain models and services.
+├── Controllers       # Application           # Web entry points that coordinate via Application layer.
+│   └── Models        # /                     # DTOs used for HTTP boundaries.
+└── Infrastructure    # Application,Domain    # Implements persistence logic and other external systems.
+```
+
+## Pre-commit hook
+
+.git/hooks/pre-commit
+
+```bash
+#!/bin/sh
+echo "Running .NET format before commit..."
+dotnet format --verify-no-changes || {
+  echo "❌ Code not formatted! Run 'dotnet format' to fix."
+  exit 1
+}
+```
+
+## TODO
+
+### Setup
+
+- [x] Initialize .NET 8.0 solution and projects (API + Tests)
+- [x] Initialize Git repository
+- [x] Sync with GitHub
+- [x] Add .gitignore
+- [x] Add global.json
+- [x] Document architecture and dependencies in README
+- [x] Configure test runner (xUnit)
+- [x] Add .editorconfig
+- [x] Add pre-commit hook
+
+### Implementation
+
+- [ ] Add API health endpoint test
+- [ ] Add API health endpoint
+- [ ] Add diff service test
+- [ ] Add diff service
+- [ ] Add diff endpoint test
+- [ ] Add diff endpoint
+
 ## Initial setup done
 
 This is only for Descartes' reference, and would usually not be a part of the repository.
@@ -103,3 +163,5 @@ info: Microsoft.Hosting.Lifetime[0]
 info: Microsoft.Hosting.Lifetime[0]
       Content root path: /Users/s3c/dev/github.com/mathmul/diff-ergo-sum/DiffErgoSum
 ```
+
+##
