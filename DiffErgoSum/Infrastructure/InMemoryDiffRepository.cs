@@ -1,6 +1,6 @@
-using System.Collections.Concurrent;
-
 namespace DiffErgoSum.Infrastructure;
+
+using System.Collections.Concurrent;
 
 public class InMemoryDiffRepository
 {

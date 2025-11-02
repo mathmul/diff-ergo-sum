@@ -1,7 +1,9 @@
-namespace DiffErgoSum.Controllers.Models
+namespace DiffErgoSum.Controllers.Models;
+
+using System.ComponentModel.DataAnnotations;
+
+public class DiffRequest
 {
-    public class DiffRequest
-    {
-        public string? Data { get; set; }
-    }
+    [Required]
+    public string? Data { get; set; }
 }

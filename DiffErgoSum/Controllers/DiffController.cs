@@ -1,9 +1,9 @@
+namespace DiffErgoSum.Controllers;
+
 using DiffErgoSum.Controllers.Models;
 using DiffErgoSum.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc;
-
-namespace DiffErgoSum.Controllers;
 
 [ApiController]
 [Route("api/v1/diff/{id}")]

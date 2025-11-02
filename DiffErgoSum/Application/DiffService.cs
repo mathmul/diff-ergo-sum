@@ -1,6 +1,6 @@
-using DiffErgoSum.Domain;
-
 namespace DiffErgoSum.Application;
+
+using DiffErgoSum.Domain;
 
 public class DiffService
 {

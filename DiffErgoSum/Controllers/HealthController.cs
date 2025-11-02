@@ -1,8 +1,8 @@
+namespace DiffErgoSum.Controllers;
+
 using DiffErgoSum.Controllers.Models;
 
 using Microsoft.AspNetCore.Mvc;
-
-namespace DiffErgoSum.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

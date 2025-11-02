@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-
 namespace DiffErgoSum.Controllers.Models;
+
+using System.Text.Json.Serialization;
 
 public class DiffResponse
 {

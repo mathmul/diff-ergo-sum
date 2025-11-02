@@ -1,11 +1,10 @@
+namespace DiffErgoSum.Tests.IntegrationTests;
+
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 
 using Microsoft.AspNetCore.Mvc.Testing;
-
-namespace DiffErgoSum.Tests.IntegrationTests;
 
 public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 {
