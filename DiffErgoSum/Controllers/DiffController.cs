@@ -40,7 +40,30 @@ public class DiffController : ControllerBase
         if (pair == null || string.IsNullOrEmpty(pair.Value.Left) || string.IsNullOrEmpty(pair.Value.Right))
             return NotFound();
 
-        // Implementation for diffing will come later
-        return Ok(new { message = "Not implemented yet" });
+        try
+        {
+            var leftBytes = Convert.FromBase64String(pair.Value.Left);
+            var rightBytes = Convert.FromBase64String(pair.Value.Right);
+
+            var service = new Application.DiffService();
+            var result = service.Compare(leftBytes, rightBytes);
+
+            var response = new DiffResponse
+            {
+                DiffResultType = result.Type.ToString(),
+                Diffs = result.Diffs?.ConvertAll(d => new DiffSegmentDto
+                {
+                    Offset = d.Offset,
+                    Length = d.Length
+                })
+            };
+
+            return Ok(response);
+        }
+        catch (FormatException)
+        {
+            // Invalid base64
+            return BadRequest();
+        }
     }
 }
