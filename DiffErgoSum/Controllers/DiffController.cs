@@ -19,6 +19,9 @@ public class DiffController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Data))
             return BadRequest();
 
+        if (!IsBase64(request.Data))
+            return StatusCode(StatusCodes.Status422UnprocessableEntity, new { error = "InvalidBase64", message = "Provided data is not valid Base64." });
+
         _repo.SaveLeft(id, request.Data);
         return Created(string.Empty, null);
     }
@@ -28,6 +31,9 @@ public class DiffController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(request.Data))
             return BadRequest();
+
+        if (!IsBase64(request.Data))
+            return StatusCode(StatusCodes.Status422UnprocessableEntity, new { error = "InvalidBase64", message = "Provided data is not valid Base64." });
 
         _repo.SaveRight(id, request.Data);
         return Created(string.Empty, null);
@@ -67,6 +73,24 @@ public class DiffController : ControllerBase
         {
             // Invalid base64
             return BadRequest();
+        }
+    }
+
+
+    private static bool IsBase64(string value)
+    {
+        try
+        {
+            Convert.FromBase64String(value);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException("Unexpected error during Base64 validation.", e);
         }
     }
 }

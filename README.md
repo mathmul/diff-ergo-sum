@@ -60,8 +60,8 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 - [x] Implement diff service (Equals, SizeDoNotMatch, ContentDoNotMatch)
 - [x] Add `DiffEndpointsTests` (integration-level, /api/v1/diff/{id}/left|right|get)
 - [x] Implement diff endpoints using in-memory storage
-- [ ] Add input/data validation tests (null / missing `data` / invalid base64)
-- [ ] Implement explicit validation + 4xx responses (match PDF assignment)
+- [x] Add input/data validation tests (null / missing `data` / invalid base64)
+- [x] Implement explicit validation + 4xx responses (match PDF assignment)
 - [ ] Add tests to cover **all** cases from the PDF sample (1–10)
 - [ ] Add tests for “right exists, left missing” and vice versa (should 404)
 - [ ] Add tests for malformed JSON bodies
