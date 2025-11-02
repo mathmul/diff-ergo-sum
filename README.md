@@ -61,6 +61,20 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 - [ ] Add `DiffEndpointsTests` (integration-level)
 - [ ] Implement diff endpoints
 
+### Technical Debt / Future Refactor
+
+Temporary test hooks (e.g., ResetRepository) exist to support isolated TDD runs.
+These must not exist in production builds. Once dependency injection (DI) is introduced,
+the InMemoryDiffRepository should be replaced by an injected instance (e.g., AddSingleton)
+and test environments should get their own scoped or transient repository.
+
+- [x] Temporary static repository for in-memory storage
+- [x] Temporary ResetRepository() used in tests for state isolation
+- [ ] Refactor to use proper DI-based repository lifetime management
+- [ ] Register InMemoryDiffRepository via DI in Program.cs (AddSingleton or AddScoped)
+- [ ] Remove static instance and ResetRepository() helper before production
+- [ ] Replace manual repository instantiation with constructor injection in DiffController
+
 ## Initial setup done
 
 This is only for Descartes' reference, and would usually not be a part of the repository.
