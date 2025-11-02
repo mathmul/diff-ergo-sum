@@ -26,16 +26,14 @@ DiffErgoSum
 
 ## Pre-commit hook
 
-.git/hooks/pre-commit
+When you first clone the repository, the pre-commit hook is **not enabled by default**.
+See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions.
 
-```bash
-#!/bin/sh
-echo "Running .NET format before commit..."
-dotnet format --verify-no-changes || {
-  echo "❌ Code not formatted! Run 'dotnet format' to fix."
-  exit 1
-}
-```
+### What the hook does
+- Optionally auto-formats staged `*.cs` files and re-stages them (if the `<AUTO-FORMAT>` block is uncommented)
+- Verifies that all staged `*.cs` files are properly formatted according to `.editorconfig`
+- Aborts the commit if formatting issues are found
+
 
 ## TODO
 

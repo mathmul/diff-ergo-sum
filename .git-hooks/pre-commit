@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# ---------------------------
+# .NET pre-commit hook
+# ---------------------------
+#
+# To enable this hook, either copy it to the default location:
+#   cp .git-hooks/pre-commit .git/hooks/pre-commit
+# or set the hooks path in your git config:
+#   git config core.hooksPath .git-hooks
+#
+# Optional:
+#   Uncomment the <AUTO-FORMAT> block below to automatically fix and restage
+#   formatting issues before committing.
+#   (In that case, copying the hook to .git/hooks is recommended
+#   to avoid committing local configuration.)
+#
+
+set -e  # stop on first error
+
+# Get staged C# files (that are added or modified)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.cs$' || true)
+
+# ---------------------------
+# AUTO-FORMAT
+# ---------------------------
+# if [ -n "$STAGED_FILES" ]; then
+#   echo "### pre-commit ### - Formatting staged files..."
+#   dotnet format --verbosity quiet --include $STAGED_FILES
+#
+#   echo "### pre-commit ### - Restaging any file that changed during formatting..."
+#   git add $STAGED_FILES
+# fi
+# ---------------------------
+
+if [ -n "$STAGED_FILES" ]; then
+  echo "### pre-commit ### - Verifying code formatting..."
+  if ! dotnet format --verify-no-changes --verbosity quiet --include $STAGED_FILES; then
+    echo "❌ Code not formatted correctly."
+    echo "   Run 'dotnet format' to fix formatting issues before committing."
+    exit 1
+  fi
+fi
+
+echo "### pre-commit ### - Formatting verified. Proceeding with commit."
