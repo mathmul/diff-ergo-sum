@@ -1,11 +1,9 @@
 namespace DiffErgoSum.Controllers.Models;
 
-public class HealthResponse
-{
-    public bool Ok { get; set; }
-
-    public HealthResponse(bool ok = true)
-    {
-        Ok = ok;
-    }
-}
+/// <summary>
+/// Represents a simple API health check response.
+/// </summary>
+/// <remarks>
+/// Returned by <c>GET /api/health</c> to indicate the service is alive.
+/// </remarks>
+public record HealthResponse(bool Ok = true);

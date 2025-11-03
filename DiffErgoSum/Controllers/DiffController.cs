@@ -5,20 +5,51 @@ using DiffErgoSum.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc;
 
+
+/// <summary>
+/// Provides endpoints for submitting Base64-encoded data and retrieving their differences.
+/// </summary>
+/// <remarks>
+/// Implements the main diffing API:
+/// <list type="bullet">
+/// <item><description><c>PUT /api/v1/diff/{id}/left</c> – upload the left side</description></item>
+/// <item><description><c>PUT /api/v1/diff/{id}/right</c> – upload the right side</description></item>
+/// <item><description><c>GET /api/v1/diff/{id}</c> – compare both sides and return a diff result</description></item>
+/// </list>
+/// Uses an in-memory repository for temporary storage during testing.
+/// </remarks>
 [ApiController]
 [Route("api/v1/diff/{id}")]
 public class DiffController : ControllerBase
 {
     private static readonly InMemoryDiffRepository _repo = new();
 
+    /// <summary>
+    /// Resets the in-memory repository.
+    /// </summary>
+    /// <remarks>
+    /// This helper exists only for test isolation and must not be used in production.
+    /// </remarks>
     public static void ResetRepository() => _repo.Clear();
 
+    /// <summary>
+    /// Uploads the left side of the diff pair.
+    /// </summary>
+    /// <param name="id">The diff identifier.</param>
+    /// <param name="request">The request body containing the Base64-encoded data.</param>
+    /// <returns>
+    /// <list type="bullet">
+    /// <item><description><see cref="StatusCodes.Status201Created"/> if successfully stored.</description></item>
+    /// <item><description><see cref="StatusCodes.Status400BadRequest"/> if model validation fails (missing or malformed JSON).</description></item>
+    /// <item><description><see cref="StatusCodes.Status422UnprocessableEntity"/> if <c>data</c> is syntactically valid but not decodable Base64.</description></item>
+    /// </list>
+    /// </returns>
     [HttpPut("left")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public IActionResult UploadLeft(int id, [FromBody] DiffRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Data))
-            return BadRequest();
-
         if (!IsBase64(request.Data))
             return StatusCode(StatusCodes.Status422UnprocessableEntity, new { error = "InvalidBase64", message = "Provided data is not valid Base64." });
 
@@ -26,12 +57,24 @@ public class DiffController : ControllerBase
         return Created(string.Empty, null);
     }
 
+    /// <summary>
+    /// Uploads the right side of the diff pair.
+    /// </summary>
+    /// <param name="id">The diff identifier.</param>
+    /// <param name="request">The request body containing the Base64-encoded data.</param>
+    /// <returns>
+    /// <list type="bullet">
+    /// <item><description><see cref="StatusCodes.Status201Created"/> if successfully stored.</description></item>
+    /// <item><description><see cref="StatusCodes.Status400BadRequest"/> if model validation fails (missing or malformed JSON).</description></item>
+    /// <item><description><see cref="StatusCodes.Status422UnprocessableEntity"/> if <c>data</c> is syntactically valid but not decodable Base64.</description></item>
+    /// </list>
+    /// </returns>
     [HttpPut("right")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public IActionResult UploadRight(int id, [FromBody] DiffRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Data))
-            return BadRequest();
-
         if (!IsBase64(request.Data))
             return StatusCode(StatusCodes.Status422UnprocessableEntity, new { error = "InvalidBase64", message = "Provided data is not valid Base64." });
 
@@ -40,9 +83,20 @@ public class DiffController : ControllerBase
     }
 
     /// <summary>
-    /// Compares the left and right base64 inputs and returns their diff result.
+    /// Compares the uploaded left and right Base64 payloads and returns their differences.
     /// </summary>
+    /// <param name="id">The diff identifier corresponding to the uploaded pair.</param>
+    /// <returns>
+    /// <list type="bullet">
+    /// <item><description><see cref="StatusCodes.Status200OK"/> with a <see cref="DiffResponse"/> body if comparison succeeds.</description></item>
+    /// <item><description><see cref="StatusCodes.Status404NotFound"/> if one or both sides are missing.</description></item>
+    /// <item><description><see cref="StatusCodes.Status400BadRequest"/> if either stored value is not valid Base64.</description></item>
+    /// </list>
+    /// </returns>
     [HttpGet]
+    [ProducesResponseType(typeof(DiffResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult GetDiff(int id)
     {
         var pair = _repo.Get(id);
@@ -57,15 +111,10 @@ public class DiffController : ControllerBase
             var service = new Application.DiffService();
             var result = service.Compare(leftBytes, rightBytes);
 
-            var response = new DiffResponse
-            {
-                DiffResultType = result.Type.ToString(),
-                Diffs = result.Diffs?.ConvertAll(d => new DiffResponseSegmentDto
-                {
-                    Offset = d.Offset,
-                    Length = d.Length
-                })
-            };
+            var response = new DiffResponse(
+                result.Type.ToString(),
+                result.Diffs?.ConvertAll(d => new DiffResponseSegmentDto(d.Offset, d.Length))
+            );
 
             return Ok(response);
         }
@@ -76,7 +125,14 @@ public class DiffController : ControllerBase
         }
     }
 
-
+    /// <summary>
+    /// Validates whether a string is a valid Base64 value.
+    /// </summary>
+    /// <param name="value">The string to test.</param>
+    /// <returns><see langword="true"/> if valid Base64; otherwise <see langword="false"/>.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if an unexpected error occurs during conversion.
+    /// </exception>
     private static bool IsBase64(string value)
     {
         try

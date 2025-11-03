@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public DiffEndpointsTests(WebApplicationFactory<Program> factory)
     {
@@ -18,96 +17,75 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task GetDiff_WhenNoData_ShouldReturn404NotFound()
-    {
-        var id = 1;
-        var response = await _client.GetAsync($"/api/v1/diff/{id}");
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
     public async Task PutLeft_ShouldReturn201Created()
     {
-        var id = 2;
-        var json = JsonContent.Create(new { data = "AAAAAA==" });
-        var response = await _client.PutAsync($"/api/v1/diff/{id}/left", json);
+        var id = 101;
+        var payload = new { data = "AAAAAA==" };
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
+
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetDiff_WhenOnlyLeftData_ShouldReturn404NotFound()
-    {
-        var id = 3;
-        var json = JsonContent.Create(new { data = "AAAAAA==" });
-        await _client.PutAsync($"/api/v1/diff/{id}/left", json);
-
-        var response = await _client.GetAsync($"/api/v1/diff/{id}");
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task PutRight_ShouldReturn201Created()
-    {
-        var id = 4;
-        var json = JsonContent.Create(new { data = "AAAAAA==" });
-        var response = await _client.PutAsync($"/api/v1/diff/{id}/right", json);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetDiff_WhenBothSidesEqual_ShouldReturn200Equals()
-    {
-        var id = 10;
-        var payload = JsonContent.Create(new { data = "AAAAAA==" });
-        await _client.PutAsync($"/api/v1/diff/{id}/left", payload);
-        await _client.PutAsync($"/api/v1/diff/{id}/right", payload);
-
-        var response = await _client.GetAsync($"/api/v1/diff/{id}");
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("Equals", json.GetProperty("diffResultType").GetString());
-    }
-
-    [Fact]
-    public async Task GetDiff_WhenSizesDiffer_ShouldReturn200SizeDoNotMatch()
-    {
-        var id = 11;
-        await _client.PutAsync($"/api/v1/diff/{id}/left", JsonContent.Create(new { data = "AAAAAA==" }));
-        await _client.PutAsync($"/api/v1/diff/{id}/right", JsonContent.Create(new { data = "AAA=" }));
-
-        var response = await _client.GetAsync($"/api/v1/diff/{id}");
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("SizeDoNotMatch", json.GetProperty("diffResultType").GetString());
-    }
-
-    [Fact]
-    public async Task GetDiff_WhenContentDiffers_ShouldReturn200DiffOffsets()
-    {
-        var id = 12;
-        await _client.PutAsync($"/api/v1/diff/{id}/left", JsonContent.Create(new { data = "AAAAAA==" }));
-        await _client.PutAsync($"/api/v1/diff/{id}/right", JsonContent.Create(new { data = "AQABAQ==" }));
-
-        var response = await _client.GetAsync($"/api/v1/diff/{id}");
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("ContentDoNotMatch", json.GetProperty("diffResultType").GetString());
-
-        var diffs = json.GetProperty("diffs").EnumerateArray().ToList();
-        Assert.NotEmpty(diffs);
-        Assert.All(diffs, d => Assert.True(d.TryGetProperty("offset", out _)));
-        Assert.All(diffs, d => Assert.True(d.TryGetProperty("length", out _)));
     }
 
     [Fact]
     public async Task PutLeft_WithNullData_ShouldReturn400BadRequest()
     {
-        var id = 20;
-        var json = JsonContent.Create(new { data = (string?)null });
-        var response = await _client.PutAsync($"/api/v1/diff/{id}/left", json);
+        var id = 102;
+        var payload = new { data = (string?)null };
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PutLeft_WithInvalidCharacters_ShouldReturn400BadRequest()
+    {
+        var id = 103;
+        var payload = new { data = "@@@===" }; // Illegal Base64 characters
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PutLeft_WithInvalidBase64_ShouldReturn422UnprocessableEntity()
+    {
+        var id = 104;
+        var payload = new { data = "Zm9vYmFy===" }; // Valid regex, invalid Base64 padding
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("InvalidBase64", json.GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public async Task PutRight_ShouldReturn201Created()
+    {
+        var id = 201;
+        var payload = new { data = "AAAAAA==" };
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PutRight_WithNullData_ShouldReturn400BadRequest()
+    {
+        var id = 202;
+        var payload = new { data = (string?)null };
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PutRight_WithInvalidCharacters_ShouldReturn400BadRequest()
+    {
+        var id = 203;
+        var payload = new { data = "@@@===" }; // Illegal Base64 characters
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -115,13 +93,97 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task PutRight_WithInvalidBase64_ShouldReturn422UnprocessableEntity()
     {
-        var id = 21;
-        var json = JsonContent.Create(new { data = "not-base64!!" });
-        var response = await _client.PutAsync($"/api/v1/diff/{id}/right", json);
+        var id = 204;
+        var payload = new { data = "Zm9vYmFy===" }; // Valid regex, invalid Base64 padding
+        var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
 
         Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
 
-        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.Equal("InvalidBase64", body.GetProperty("error").GetString());
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("InvalidBase64", json.GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public async Task GetDiff_WhenBothSidesEqual_ShouldReturn200Equals()
+    {
+        var id = 301;
+        var payload = new { data = "AAAAAA==" };
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
+        var response = await _client.GetAsync($"/api/v1/diff/{id}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("Equals", json.GetProperty("diffResultType").GetString());
+    }
+
+    [Fact]
+    public async Task GetDiff_WhenNoData_ShouldReturn404NotFound()
+    {
+        var id = 302;
+        var response = await _client.GetAsync($"/api/v1/diff/{id}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetDiff_WhenOnlyLeftData_ShouldReturn404NotFound()
+    {
+        var id = 303;
+        var payload = new { data = "AAAAAA==" };
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
+        var response = await _client.GetAsync($"/api/v1/diff/{id}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetDiff_WhenOnlyRightData_ShouldReturn404NotFound()
+    {
+        var id = 304;
+        var payload = new { data = "AAAAAA==" };
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
+        var response = await _client.GetAsync($"/api/v1/diff/{id}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetDiff_WhenSizesDiffer_ShouldReturn200SizeDoNotMatch()
+    {
+        var id = 305;
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", new { data = "AAAAAA==" });
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", new { data = "AAA=" });
+        var response = await _client.GetAsync($"/api/v1/diff/{id}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("SizeDoNotMatch", json.GetProperty("diffResultType").GetString());
+    }
+
+    [Fact]
+    public async Task GetDiff_WhenContentDiffers_ShouldReturn200DiffOffsets()
+    {
+        var id = 306;
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", new { data = "AAAAAA==" });
+        await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", new { data = "AQABAQ==" });
+        var response = await _client.GetAsync($"/api/v1/diff/{id}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("ContentDoNotMatch", json.GetProperty("diffResultType").GetString());
+
+        var diffs = json.GetProperty("diffs").EnumerateArray().ToList();
+
+        Assert.NotEmpty(diffs);
+        Assert.All(diffs, d => Assert.True(d.TryGetProperty("offset", out _)));
+        Assert.All(diffs, d => Assert.True(d.TryGetProperty("length", out _)));
     }
 }
