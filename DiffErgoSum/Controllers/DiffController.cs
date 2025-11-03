@@ -60,7 +60,7 @@ public class DiffController : ControllerBase
             var response = new DiffResponse
             {
                 DiffResultType = result.Type.ToString(),
-                Diffs = result.Diffs?.ConvertAll(d => new DiffSegmentDto
+                Diffs = result.Diffs?.ConvertAll(d => new DiffResponseSegmentDto
                 {
                     Offset = d.Offset,
                     Length = d.Length

@@ -47,6 +47,40 @@ dotnet_naming_symbols.private_fields.applicable_kinds = field
 dotnet_naming_style.camel_case_style.capitalization = camel_case
 dotnet_naming_style.camel_case_style.required_prefix = _
 
+# ------------------------------------------------------------------------
+# StyleCop.Analyzers adjustments (keep StyleCop installed but not militant)
+# ------------------------------------------------------------------------
+# TODO: Consider re-enabling some of these rules later
+
+# Disable XML documentation requirements
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1602.severity = none
+dotnet_diagnostic.SA1611.severity = none
+dotnet_diagnostic.SA1615.severity = none
+dotnet_diagnostic.SA1633.severity = none
+
+# Disable overly strict layout and style rules
+dotnet_diagnostic.SA1309.severity = none  # underscores in fields OK
+dotnet_diagnostic.SA1101.severity = none  # no 'this.' prefix needed
+dotnet_diagnostic.SA1201.severity = none  # constructor position
+dotnet_diagnostic.SA1503.severity = none  # allow braces omission
+dotnet_diagnostic.SA1516.severity = none  # allow adjacent elements
+dotnet_diagnostic.SA1413.severity = none  # trailing commas
+dotnet_diagnostic.SA1000.severity = none  # spacing after 'new'
+dotnet_diagnostic.SA1009.severity = none  # parentheses spacing
+dotnet_diagnostic.SA1513.severity = none  # blank line after brace
+dotnet_diagnostic.SA1507.severity = none  # multiple blank lines
+dotnet_diagnostic.SA1502.severity = none  # single-line elements
+dotnet_diagnostic.SA1110.severity = none
+dotnet_diagnostic.SA1111.severity = none
+dotnet_diagnostic.SA1118.severity = none
+dotnet_diagnostic.SA1313.severity = none  # parameter casing
+dotnet_diagnostic.SA1413.severity = none  # trailing comma rule
+
+# Reduce noise: treat remaining StyleCop warnings as info
+# dotnet_analyzer_diagnostic.severity = suggestion
+
 
 [*.csproj]
 indent_size = 2

@@ -114,6 +114,20 @@ repository should be registered via DI and test envs should get their own instan
 - [ ] Add `.github/workflows/dotnet.yml` to run `dotnet build` + `dotnet test` on PRs
 - [ ] (Perhaps) Add `dotnet format` to CI to enforce style
 
+### Code Quality / Static Analysis
+
+- [x] Enable built-in Roslyn analyzers via `<AnalysisLevel>latest</AnalysisLevel>` and `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>`
+- [x] Add NuGet packages for enhanced static analysis:
+      - `Microsoft.CodeAnalysis.NetAnalyzers`
+      - `Microsoft.CodeAnalysis.Analyzers`
+      - `Microsoft.VisualStudio.Threading.Analyzers` (optional, async/threading)
+      - `SonarAnalyzer.CSharp` (for security and maintainability)
+      - `StyleCop.Analyzers`
+- [ ] Keep default rule severities for consistency across projects (avoid custom .ruleset initially)
+- [ ] Verify that no `.ruleset` or `.editorconfig` overrides exist during code review
+- [ ] Integrate analyzer warnings into CI build (treat as errors only after stabilizing)
+- [ ] Revisit rules customization once the project matures (post-MVP)
+
 ### API Documentation (Swagger)
 
 - [x] Add OpenAPI for dev environment (`.AddSwaggerGen`)
