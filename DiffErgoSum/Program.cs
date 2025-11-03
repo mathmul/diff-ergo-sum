@@ -3,7 +3,7 @@ using System.Reflection;
 using DiffErgoSum.Application;
 using DiffErgoSum.Domain;
 using DiffErgoSum.Infrastructure;
-using DiffErgoSum.OpenApi;
+using DiffErgoSum.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen(c =>
 {
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename), includeControllerXmlComments: true);
-    c.OperationFilter<SwaggerUiRemarksOperationFilter>();
+
+    c.SupportNonNullableReferenceTypes();
 
     c.SwaggerDoc("v1", new()
     {
@@ -44,7 +45,7 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "docs";
     });
 }
-
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

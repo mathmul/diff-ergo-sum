@@ -1,6 +1,7 @@
 namespace DiffErgoSum.Controllers;
 
 using DiffErgoSum.Application;
+using DiffErgoSum.Controllers.Exceptions;
 using DiffErgoSum.Controllers.Models;
 using DiffErgoSum.Domain;
 using DiffErgoSum.Domain.Validators;
@@ -46,14 +47,14 @@ public class DiffController : ControllerBase
     /// </list>
     /// </returns>
     [HttpPut("left")]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
     public IActionResult UploadLeft(int id, [FromBody] DiffRequest request)
     {
         if (!Base64Validator.IsValid(request.Data))
-            return UnprocessableEntity(new ApiErrorResponse("InvalidBase64", "Provided data is not valid Base64."));
+            throw new InvalidBase64HttpException();
 
         _repo.SaveLeft(id, request.Data);
         return Created(string.Empty, null);
@@ -72,14 +73,14 @@ public class DiffController : ControllerBase
     /// </list>
     /// </returns>
     [HttpPut("right")]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
     public IActionResult UploadRight(int id, [FromBody] DiffRequest request)
     {
         if (!Base64Validator.IsValid(request.Data))
-            return UnprocessableEntity(new ApiErrorResponse("InvalidBase64", "Provided data is not valid Base64."));
+            throw new InvalidBase64HttpException();
 
         _repo.SaveRight(id, request.Data);
         return Created(string.Empty, null);
@@ -99,30 +100,23 @@ public class DiffController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(DiffResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
     public IActionResult GetDiff(int id)
     {
         var pair = _repo.Get(id);
         if (pair == null || string.IsNullOrEmpty(pair.Value.Left) || string.IsNullOrEmpty(pair.Value.Right))
-            return NotFound();
+            throw new DiffNotFoundHttpException(id);
 
-        try
-        {
-            var leftBytes = Convert.FromBase64String(pair.Value.Left);
-            var rightBytes = Convert.FromBase64String(pair.Value.Right);
+        var leftBytes = Convert.FromBase64String(pair.Value.Left);
+        var rightBytes = Convert.FromBase64String(pair.Value.Right);
 
-            var result = _service.Compare(leftBytes, rightBytes);
+        var result = _service.Compare(leftBytes, rightBytes);
 
-            var response = new DiffResponse(
-                result.Type.ToString(),
-                result.Diffs?.ConvertAll(d => new DiffResponseSegmentDto(d.Offset, d.Length))
-            );
+        var response = new DiffResponse(
+            result.Type.ToString(),
+            result.Diffs?.ConvertAll(d => new DiffResponseSegmentDto(d.Offset, d.Length))
+        );
 
-            return Ok(response);
-        }
-        catch (FormatException ex)
-        {
-            return UnprocessableEntity(new ApiErrorResponse("InvalidBase64", ex.Message));
-        }
+        return Ok(response);
     }
 }

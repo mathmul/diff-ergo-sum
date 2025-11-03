@@ -9,7 +9,10 @@ using System.Text.Json.Serialization;
 /// Every error response should include a machine-readable <c>error</c> code
 /// and a human-readable <c>message</c>.
 /// </remarks>
-public record ApiErrorResponse(string ErrorCode, string ErrorMessage) : ApiResponse(ErrorCode, ErrorMessage)
+public record ApiErrorResponse(
+    [property: JsonPropertyName("error")] string ErrorCode,
+    [property: JsonPropertyName("message")] string ErrorMessage
+) : ApiResponse
 {
     /// <summary>
     /// Creates an <see cref="ApiErrorResponse"/> from an exception, using its type name as the error code.
