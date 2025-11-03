@@ -1,8 +1,10 @@
 namespace DiffErgoSum.Application;
 
+using System.Collections.Generic;
+
 using DiffErgoSum.Domain;
 
-public class DiffService
+public class DiffService : IDiffService
 {
     public DiffResult Compare(byte[] left, byte[] right)
     {
@@ -11,16 +13,7 @@ public class DiffService
             return new DiffResult(DiffType.SizeDoNotMatch);
 
         // Case 2: Equal content
-        bool areEqual = true;
-        for (int i = 0; i < left.Length; i++)
-        {
-            if (left[i] != right[i])
-            {
-                areEqual = false;
-                break;
-            }
-        }
-        if (areEqual)
+        if (left.AsSpan().SequenceEqual(right))
             return new DiffResult(DiffType.Equals);
 
         // Case 3: Same size but content differs
@@ -39,14 +32,8 @@ public class DiffService
             if (left[i] != right[i])
             {
                 if (offset == -1)
-                {
                     offset = i;
-                    length = 1;
-                }
-                else
-                {
-                    length++;
-                }
+                length++;
             }
             else if (offset != -1)
             {

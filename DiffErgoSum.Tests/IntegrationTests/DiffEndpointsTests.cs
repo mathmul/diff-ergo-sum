@@ -4,7 +4,11 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
+using DiffErgoSum.Domain;
+using DiffErgoSum.Infrastructure;
+
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 
 public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -12,8 +16,11 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 
     public DiffEndpointsTests(WebApplicationFactory<Program> factory)
     {
-        _client = factory.CreateClient();
-        Controllers.DiffController.ResetRepository();
+        _client = factory.WithWebHostBuilder(builder => builder.ConfigureServices(services =>
+        {
+            // Replace singleton repository with a new instance per test
+            services.AddSingleton<IDiffRepository, InMemoryDiffRepository>();
+        })).CreateClient();
     }
 
     [Fact]

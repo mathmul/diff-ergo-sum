@@ -1,7 +1,8 @@
 namespace DiffErgoSum.Controllers;
 
+using DiffErgoSum.Application;
 using DiffErgoSum.Controllers.Models;
-using DiffErgoSum.Infrastructure;
+using DiffErgoSum.Domain;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,15 +23,14 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/v1/diff/{id}")]
 public class DiffController : ControllerBase
 {
-    private static readonly InMemoryDiffRepository _repo = new();
+    private readonly IDiffRepository _repo;
+    private readonly IDiffService _service;
 
-    /// <summary>
-    /// Resets the in-memory repository.
-    /// </summary>
-    /// <remarks>
-    /// This helper exists only for test isolation and must not be used in production.
-    /// </remarks>
-    public static void ResetRepository() => _repo.Clear();
+    public DiffController(IDiffRepository repo, IDiffService service)
+    {
+        _repo = repo;
+        _service = service;
+    }
 
     /// <summary>
     /// Uploads the left side of the diff pair.
@@ -108,8 +108,7 @@ public class DiffController : ControllerBase
             var leftBytes = Convert.FromBase64String(pair.Value.Left);
             var rightBytes = Convert.FromBase64String(pair.Value.Right);
 
-            var service = new Application.DiffService();
-            var result = service.Compare(leftBytes, rightBytes);
+            var result = _service.Compare(leftBytes, rightBytes);
 
             var response = new DiffResponse(
                 result.Type.ToString(),

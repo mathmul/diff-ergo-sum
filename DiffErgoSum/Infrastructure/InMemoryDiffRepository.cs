@@ -2,11 +2,11 @@ namespace DiffErgoSum.Infrastructure;
 
 using System.Collections.Concurrent;
 
-public class InMemoryDiffRepository
+using DiffErgoSum.Domain;
+
+public class InMemoryDiffRepository : IDiffRepository
 {
     private readonly ConcurrentDictionary<int, (string? Left, string? Right)> _store = new();
-
-    public void Clear() => _store.Clear();
 
     public void SaveLeft(int id, string base64Data)
     {

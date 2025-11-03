@@ -1,5 +1,8 @@
 using System.Reflection;
 
+using DiffErgoSum.Application;
+using DiffErgoSum.Domain;
+using DiffErgoSum.Infrastructure;
 using DiffErgoSum.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(c =>
 {
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -27,6 +29,8 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+builder.Services.AddTransient<IDiffService, DiffService>();
+builder.Services.AddSingleton<IDiffRepository, InMemoryDiffRepository>();
 
 var app = builder.Build();
 
@@ -48,7 +52,7 @@ app.UseHttpsRedirection();
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/weather-forecast", () =>
 {
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast

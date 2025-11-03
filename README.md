@@ -62,9 +62,9 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 - [x] Implement diff endpoints using in-memory storage
 - [x] Add input/data validation tests (null / missing `data` / invalid base64)
 - [x] Implement explicit validation + 4xx responses (match PDF assignment)
-- [ ] Add tests to cover **all** cases from the PDF sample (1–10)
-- [ ] Add tests for “right exists, left missing” and vice versa (should 404)
-- [ ] Add tests for malformed JSON bodies
+- [x] Add tests to cover **all** cases from the PDF sample (1–10)
+- [x] Add tests for “right exists, left missing” and vice versa (should 404)
+- [x] Add tests for malformed JSON bodies
 
 ### Technical Debt / Future Refactor
 
@@ -73,33 +73,33 @@ These must **not** exist in production builds. Once DI is introduced, the in-mem
 repository should be registered via DI and test envs should get their own instance.
 
 - [x] Temporary static repository for in-memory storage
-- [x] Temporary `ResetRepository()` used in tests for state isolation
-- [ ] Refactor to use proper DI-based repository lifetime management
-- [ ] Register `InMemoryDiffRepository` via DI in `Program.cs` (`AddSingleton` or `AddScoped`)
-- [ ] Remove static instance and `ResetRepository()` helper before production
-- [ ] Replace manual repo instantiation in `DiffController` with constructor injection
+- [x] <del>Temporary `ResetRepository()` used in tests for state isolation</del>
+- [x] Refactor to use proper DI-based repository lifetime management
+- [x] Register `InMemoryDiffRepository` via DI in `Program.cs` (`AddSingleton` or `AddScoped`)
+- [x] Remove static instance and `ResetRepository()` helper before production
+- [x] Replace manual repo instantiation in `DiffController` with constructor injection
 - [ ] Consider splitting layers into separate projects if "assignment" grows
 - [ ] Replace or extend to InMemoryDiffRepository:
       - **PostgreSQL** — for long-term persistence and auditability (with EF Core or Dapper + migrations)
       - **Redis** — for high-volume, repeated requests or temporary caching (hash per `diff:{id}`)
       - **Filesystem / Object Storage** — for large binary payloads or archival
       - **SQLite** — for lightweight, embedded setups or demos
-- [ ] Introduce an `IDiffRepository` interface to enforce dependency inversion — controllers and services depend only on the abstraction, not the implementation
+- [x] Introduce an `IDiffRepository` interface to enforce dependency inversion — controllers and services depend only on the abstraction, not the implementation
 - [ ] Provide schema or configuration for the chosen backend (SQL migrations or Redis setup)
 - [ ] Add integration tests for the persistent repository implementation
 - [ ] Make repository implementation configurable via environment variables (e.g., `STORAGE=postgres|redis|memory`)
 
 ### Error Handling / API UX
 
-- [ ] Explicit error responses (HTTP status codes)
+- [x] Explicit error responses (HTTP status codes)
 - [ ] Standardize error shape (e.g. `{ "error": "InvalidBase64", "message": "..." }`)
 - [ ] Catch expected exceptions (eg. `FormatException` from `Convert.FromBase64String`) and return 422 with message
-- [ ] Add tests for invalid base64 on GET (stored bad data)
+- [x] Add tests for invalid base64 on GET (stored bad data)
 - [ ] Document error responses in README and/or OpenAPI
 
 ### Testing Strategy
 
-- [ ] Cover every example from the assignment PDF (10-step sample)
+- [x] Cover every example from the assignment PDF (10-step sample)
 - [ ] Add regression test for "same size but multiple contiguous diffs"
 - [ ] Consider property-based testing for diff logic
   - e.g. generate two byte arrays of same length → diffs must be non-overlapping and ordered
