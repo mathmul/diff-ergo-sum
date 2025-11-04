@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 /// </remarks>
 public record DiffRequest(
     [property: Required]
-    [property: RegularExpression(@"^[A-Za-z0-9+/=]+$", ErrorMessage = "Data must be Base64.")]
+    [property: RegularExpression(@"^[A-Za-z0-9+/=]+$", ErrorMessage = "Provided data is not valid Base64.")]
     [property: JsonPropertyName("data")]
     string Data
 )
