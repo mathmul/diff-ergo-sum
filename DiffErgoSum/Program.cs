@@ -6,7 +6,19 @@ using DiffErgoSum.Domain;
 using DiffErgoSum.Infrastructure;
 using DiffErgoSum.Middleware;
 
+using DotNetEnv;
+
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Env.Load();
+Env.Load(Path.Combine(AppContext.BaseDirectory, ".env"));
+
+builder.Configuration.AddEnvironmentVariables();
+
+var dbDriver = builder.Configuration["DB_DRIVER"] ?? "inmemory";
+Console.WriteLine($"Using DB_DRIVER={dbDriver}");
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,7 +47,24 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddTransient<IDiffService, DiffService>();
-builder.Services.AddSingleton<IDiffRepository, InMemoryDiffRepository>();
+var supported = new[] { "inmemory", "sqlite", "postgres" };
+if (!supported.Contains(dbDriver.ToLowerInvariant()))
+    throw new InvalidOperationException($"Unsupported DB_DRIVER={dbDriver}");
+switch (dbDriver.ToLowerInvariant())
+{
+    case "sqlite":
+        builder.Services.AddDbContext<DiffDbContext>(options =>
+            options.UseSqlite("Data Source=diffs.db"));
+        builder.Services.AddScoped<IDiffRepository, SqliteDiffRepository>();
+        break;
+    /* case "postgres":
+        builder.Services.AddScoped<IDiffRepository, PostgresDiffRepository>();
+        break; */
+    case "inmemory":
+    default:
+        builder.Services.AddSingleton<IDiffRepository, InMemoryDiffRepository>();
+        break;
+}
 
 var app = builder.Build();
 
