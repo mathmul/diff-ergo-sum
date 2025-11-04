@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 
 /// <summary>
-/// Converts model validation errors into standardized <see cref="ApiErrorResponse"/> responses.
+/// Converts model validation errors into standardized <see cref="ProblemDetailsResponse"/> responses.
 /// </summary>
 public class ValidationFilter : IActionFilter
 {
@@ -22,10 +22,17 @@ public class ValidationFilter : IActionFilter
             .Distinct()
             .ToArray();
 
-        context.Result = new BadRequestObjectResult(new ApiErrorResponse(
-            "ValidationError",
-            errors.Length > 0 ? string.Join("; ", errors) : "Invalid request body."
-        ));
+        var detail = errors.Length > 0 ? string.Join("; ", errors) : "Invalid request body.";
+
+        var problem = new ProblemDetailsResponse(
+            Type: "about:blank",
+            Title: "Validation Error",
+            Status: StatusCodes.Status400BadRequest,
+            Detail: detail,
+            Instance: context.HttpContext.Request.Path
+        );
+
+        context.Result = new BadRequestObjectResult(problem);
     }
 
     public void OnActionExecuted(ActionExecutedContext context) { }

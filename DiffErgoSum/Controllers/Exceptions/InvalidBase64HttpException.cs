@@ -1,7 +1,7 @@
 namespace DiffErgoSum.Controllers.Exceptions;
 
 public sealed class InvalidBase64HttpException() : HttpException(
-    StatusCodes.Status422UnprocessableEntity,
-    "InvalidBase64",
-    "Provided data is not valid Base64."
+    statusCode: StatusCodes.Status422UnprocessableEntity,
+    title: "Invalid Base64 Input",
+    detail: "Provided data is not valid Base64."
 );

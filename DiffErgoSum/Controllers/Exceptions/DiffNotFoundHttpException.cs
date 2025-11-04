@@ -1,7 +1,7 @@
 namespace DiffErgoSum.Controllers.Exceptions;
 
 public sealed class DiffNotFoundHttpException(int id) : HttpException(
-    StatusCodes.Status404NotFound,
-    "DiffNotFound",
-    $"Diff with ID {id} was not found."
+    statusCode: StatusCodes.Status404NotFound,
+    title: "DiffNotFound",
+    detail: $"Diff with ID {id} was not found."
 );

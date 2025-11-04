@@ -64,7 +64,9 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
-        Assert.Equal("InvalidBase64", json.GetProperty("error").GetString());
+        Assert.Equal(422, json.GetProperty("status").GetInt32());
+        Assert.Equal("Invalid Base64 Input", json.GetProperty("title").GetString());
+        Assert.Equal("Provided data is not valid Base64.", json.GetProperty("detail").GetString());
     }
 
     [Fact]
@@ -108,7 +110,9 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
-        Assert.Equal("InvalidBase64", json.GetProperty("error").GetString());
+        Assert.Equal(422, json.GetProperty("status").GetInt32());
+        Assert.Equal("Invalid Base64 Input", json.GetProperty("title").GetString());
+        Assert.Equal("Provided data is not valid Base64.", json.GetProperty("detail").GetString());
     }
 
     [Fact]

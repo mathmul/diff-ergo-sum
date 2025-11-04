@@ -10,27 +10,33 @@ using DiffErgoSum.Controllers.Models;
 public class HttpException : Exception
 {
     public int StatusCode { get; }
-    public string ErrorCode { get; }
+    public string Title { get; }
+    public string Type { get; }
+    public string? Detail { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HttpException"/> class.
     /// </summary>
     /// <param name="statusCode">HTTP Status Code.</param>
-    /// <param name="errorCode">Machine-readable Error Code.</param>
-    /// <param name="errorMessage">Human-readable Error Message.</param>
+    /// <param name="title">0...</param>
+    /// <param name="type">1...</param>
+    /// <param name="detail">2...</param>
     public HttpException(
         int statusCode = 500,
-        string errorCode = "ApiError",
-        string errorMessage = "Unknown API error"
+        string title = "Internal Server Error",
+        string type = "about:blank",
+        string? detail = null
     )
-        : base(errorMessage) // Maps to .Message
+        : base(detail ?? title)
     {
         StatusCode = statusCode;
-        ErrorCode = errorCode;
+        Title = title;
+        Type = type;
+        Detail = detail;
     }
 
     /// <summary>Converts this exception to a standardized API error response.</summary>
-    /// <returns>An <see cref="ApiErrorResponse"/> containing the error code and message.</returns>
-    public ApiErrorResponse ToResponse() =>
-        new(ErrorCode, Message);
+    /// <returns>An <see cref="ProblemDetailsResponse"/> containing the error code and message.</returns>
+    public ProblemDetailsResponse ToProblemDetails(string? instance = null) =>
+        new(Type, Title, StatusCode, Detail ?? Message, instance);
 }

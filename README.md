@@ -92,10 +92,10 @@ repository should be registered via DI and test envs should get their own instan
 ### Error Handling / API UX
 
 - [x] Explicit error responses (HTTP status codes)
-- [ ] Standardize error shape (e.g. `{ "error": "InvalidBase64", "message": "..." }`)
-- [ ] Catch expected exceptions (eg. `FormatException` from `Convert.FromBase64String`) and return 422 with message
+- [x] Standardize error shape (e.g. `{ "error": "InvalidBase64", "message": "..." }`)
+- [x] Catch expected exceptions (eg. `FormatException` from `Convert.FromBase64String`) and return 422 with message
 - [x] Add tests for invalid base64 on GET (stored bad data)
-- [ ] Document error responses in README and/or OpenAPI
+- [x] Document error responses in README and/or OpenAPI
 
 ### Testing Strategy
 
