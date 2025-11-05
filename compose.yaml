@@ -1,0 +1,64 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: ${ASPNETCORE_URLS:-http://+:8080}
+      DB_DRIVER: ${DB_DRIVER:-postgres}
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: differgosum
+      POSTGRES_USER: differgosum
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    ports:
+      - "8080:8080"
+    profiles: ["full"]
+
+  api-dev:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Test
+      POSTGRES_HOST: postgres_test
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: build
+    working_dir: /src
+    volumes:
+      - .:/src
+      - ~/.nuget/packages:/root/.nuget/packages
+    profiles: ["dev", "test"]
+
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: differgosum
+      POSTGRES_USER: differgosum
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    volumes:
+      - diff-data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U differgosum -d differgosum" ]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    profiles: ["dbonly", "full"]
+
+  postgres_test:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: differgosum_test
+      POSTGRES_USER: differgosum_test
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST:-secret}
+    volumes:
+      - diff-test-data:/var/lib/postgresql
+    profiles: ["dbonly", "test", "full"]
+
+volumes:
+  diff-data:
+  diff-test-data:
