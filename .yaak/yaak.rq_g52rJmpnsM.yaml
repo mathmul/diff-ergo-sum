@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_g52rJmpnsM
+createdAt: 2025-11-04T19:31:48.966335
+updatedAt: 2025-11-04T19:34:53.309761
+workspaceId: wk_D57nd6EosX
+folderId: null
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: OpenAPI JSON
+sortPriority: 0.0
+url: ${[ baseUrl ]}/swagger/v1/swagger.json
+urlParameters: []

@@ -1,0 +1,14 @@
+type: workspace
+model: workspace
+id: wk_D57nd6EosX
+createdAt: 2025-11-04T19:24:31.157704
+updatedAt: 2025-11-04T19:24:34.321257
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: DiffErgoSum
+encryptionKeyChallenge: eUE0azNuQwEMqioFmO23rFwE0Qd3y/7QpJ8Qiqtye8GPm+0AGyMxixr+NbPPw0VjEnyqdXw8JmVvOpvLj2i25NKCfaL7EU7tKt1In/SG6eIo4cUq/vxN8K/WN0giAuNvRZU=
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

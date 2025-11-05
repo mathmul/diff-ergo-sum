@@ -1,0 +1,34 @@
+type: http_request
+model: http_request
+id: rq_MFiYgeXzTf
+createdAt: 2025-11-05T00:55:40.186051
+updatedAt: 2025-11-05T02:01:36.368537
+workspaceId: wk_D57nd6EosX
+folderId: fl_pypydzXj53
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "data": "AAAAAA=="
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: EqtXzK5y2P
+method: PUT
+name: /1/right
+sortPriority: 0.0021999999999999997
+url: ${[ apiUrl ]}/v1/diff/1/right
+urlParameters:
+- enabled: true
+  name: data
+  value: aksjdfh==
+  id: Gqx7cVmKtH
+- enabled: true
+  name: ''
+  value: ''
+  id: jpWuxMs76u

@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_w2bX3qqVDh
+createdAt: 2025-11-04T19:34:18.829512
+updatedAt: 2025-11-04T19:34:37.678381
+workspaceId: wk_D57nd6EosX
+folderId: fl_dtvJaRWi4p
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: Env
+sortPriority: 1000.0
+url: ${[ apiUrl ]}/health/env
+urlParameters: []

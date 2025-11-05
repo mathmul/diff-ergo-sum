@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_fynurKnqcc
+createdAt: 2025-11-05T00:53:15.145471
+updatedAt: 2025-11-05T00:56:56.623706
+workspaceId: wk_D57nd6EosX
+folderId: fl_pypydzXj53
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: /1
+sortPriority: 0.0001
+url: ${[ apiUrl ]}/v1/diff/1
+urlParameters: []
