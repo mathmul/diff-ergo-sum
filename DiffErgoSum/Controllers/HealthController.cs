@@ -23,16 +23,15 @@ public class HealthController : ControllerBase
     public IActionResult Get() =>
         Ok(new HealthResponse());
 
-    // TODO: remove as it is only for debugging purposes
+#if DEBUG
     [HttpGet("env")]
     public IActionResult GetEnv([FromServices] IServiceProvider sp)
     {
         var configDriver = _config["DB_DRIVER"] ?? "inmemory";
 
-        // Ask EF what provider is actually wired
-        var provider = sp.GetService<DiffErgoSum.Infrastructure.DiffDbContext>()?
-                          .Database.ProviderName;
+        var provider = sp.GetService<Infrastructure.DiffDbContext>()?.Database.ProviderName;
 
         return Ok(new { dbDriver = configDriver, efProvider = provider });
     }
+#endif
 }
