@@ -86,7 +86,7 @@ dotnet_diagnostic.SA1413.severity = none  # trailing comma rule
 indent_size = 2
 
 
-[*.json]
+[*.{json,yaml,yml,xml}]
 indent_size = 2
 
 
