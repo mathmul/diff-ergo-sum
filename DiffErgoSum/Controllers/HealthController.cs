@@ -24,6 +24,9 @@ public class HealthController : ControllerBase
         Ok(new HealthResponse());
 
 #if DEBUG
+    /// <summary>
+    /// Returns environment information for debugging purposes.
+    /// </summary>
     [HttpGet("env")]
     public IActionResult GetEnv([FromServices] IServiceProvider sp)
     {
