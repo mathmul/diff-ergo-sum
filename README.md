@@ -13,18 +13,28 @@ The project is implemented in C# using .NET 8.0 and follows:
 
 ```bash
 DiffErgoSum.Tests/
-├── ApiHealthTest.cs             # sanity / environment test
-├── DiffServiceTests.cs          # unit tests for core logic
-└── IntegrationTests/            #
-    └── DiffEndpointsTests.cs    # full flow
+├── ApiHealthTest.cs                        # sanity / environment test
+├── DiffServiceTests.cs                     # unit tests for core logic
+└── IntegrationTests/                       #
+    ├── DiffEndpointsTests.cs               # full flow
+    └── DiffRepositoryIntegrationTest.cs    # DB integration (postgres)
 
 DiffErgoSum
-│ # LAYER             # DEPENDS ON            # NOTES
-├── Domain            # /                     # Core business rules; pure logic.
-├── Application       # Domain                # Uses domain models and services.
-├── Controllers       # Application           # Web entry points that coordinate via Application layer.
-│   └── Models        # /                     # DTOs used for HTTP boundaries.
-└── Infrastructure    # Application,Domain    # Implements persistence logic and other external systems.
+│ # LAYER             # DEPENDS ON     # NOTES
+├── Domain            # /              # Core business logic and rules; pure, framework-independent.
+│   └── Validators    # /              # Domain-agnostic validation helpers or data checks.
+│
+├── Application       # Domain         # Uses domain models and services, and is injected into controllers.
+│
+├── Controllers       # Application    # API entry points; translate HTTP requests/responses to/from the Application layer.
+│   ├── Exceptions    # /              # Custom HTTP-friendly exception types.
+│   ├── Filters       # /              # ASP.NET filters for request validation and error handling.
+│   └── Models        # /              # DTOs used for HTTP boundaries.
+│
+├── Middleware        # Controllers    # Cross-cutting concerns (e.g. error handling) that wrap HTTP requests.
+│
+└── Infrastructure    # Domain         # Implements persistence logic and other external systems.
+    └── Entities      # /              # Database or storage entities.
 ```
 
 ## Pre-commit hook
@@ -40,7 +50,7 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 
 ## TODO
 
-### Setup
+<details><summary>Setup</summary>
 
 - [x] Initialize .NET 8.0 solution and projects (API + Tests)
 - [x] Initialize Git repository
@@ -52,7 +62,9 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 - [x] Add .editorconfig
 - [x] Add pre-commit hook
 
-### Implementation (TDD)
+</details>
+
+<details><summary>Implementation (TDD)</summary>
 
 - [x] Add `ApiHealthTest` (`/api/health` sanity check)
 - [x] Implement API health endpoint
@@ -66,7 +78,9 @@ See [.git-hooks/pre-commit](.git-hooks/pre-commit) for installation instructions
 - [x] Add tests for “right exists, left missing” and vice versa (should 404)
 - [x] Add tests for malformed JSON bodies
 
-### Technical Debt / Future Refactor
+</details>
+
+<details><summary>Technical Debt / Future Refactor</summary>
 
 Temporary test hooks (e.g. `ResetRepository`) exist to support isolated TDD runs.
 These must **not** exist in production builds. Once DI is introduced, the in-memory
@@ -89,7 +103,9 @@ repository should be registered via DI and test envs should get their own instan
 - [ ] Add integration tests for the persistent repository implementation
 - [ ] Make repository implementation configurable via environment variables (e.g., `STORAGE=postgres|redis|memory`)
 
-### Error Handling / API UX
+</details>
+
+<details><summary>Error Handling / API UX</summary>
 
 - [x] Explicit error responses (HTTP status codes)
 - [x] Standardize error shape (e.g. `{ "error": "InvalidBase64", "message": "..." }`)
@@ -97,7 +113,9 @@ repository should be registered via DI and test envs should get their own instan
 - [x] Add tests for invalid base64 on GET (stored bad data)
 - [x] Document error responses in README and/or OpenAPI
 
-### Testing Strategy
+</details>
+
+<details><summary>Testing Strategy</summary>
 
 - [x] Cover every example from the assignment PDF (10-step sample)
 - [ ] Add regression test for "same size but multiple contiguous diffs"
@@ -107,14 +125,18 @@ repository should be registered via DI and test envs should get their own instan
   - e.g. when lengths differ → always `SizeDoNotMatch`
 - [ ] Consider base64 roundtrip tests (store → decode → diff)
 
-### Tooling / DevEx
+</details>
 
-- [ ] Dockerize the project (multi-stage build, `dotnet publish`)
-- [ ] Add "Getting Started" section to README (local run + docker run)
+<details><summary>Tooling / DevEx</summary>
+
+- [x] Dockerize the project (multi-stage build, `dotnet publish`)
+- [x] Add "Getting Started" section to README (local run + docker run)
 - [ ] Add `.github/workflows/dotnet.yml` to run `dotnet build` + `dotnet test` on PRs
-- [ ] (Perhaps) Add `dotnet format` to CI to enforce style
+- [x] Add `dotnet format` to CI to enforce style (ready in Makefile, not used in CI/CD yet)
 
-### Code Quality / Static Analysis
+</details>
+
+<details><summary>Code Quality / Static Analysis</summary>
 
 - [x] Enable built-in Roslyn analyzers via `<AnalysisLevel>latest</AnalysisLevel>` and `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>`
 - [x] Add NuGet packages for enhanced static analysis:
@@ -123,33 +145,107 @@ repository should be registered via DI and test envs should get their own instan
       - `Microsoft.VisualStudio.Threading.Analyzers` (optional, async/threading)
       - `SonarAnalyzer.CSharp` (for security and maintainability)
       - `StyleCop.Analyzers`
-- [ ] Keep default rule severities for consistency across projects (avoid custom .ruleset initially)
-- [ ] Verify that no `.ruleset` or `.editorconfig` overrides exist during code review
+- [x] Keep default rule severities for consistency across projects (avoid custom .ruleset initially)
+- [x] Verify that no `.ruleset` or `.editorconfig` overrides exist during code review
 - [ ] Integrate analyzer warnings into CI build (treat as errors only after stabilizing)
 - [ ] Revisit rules customization once the project matures (post-MVP)
 
-### API Documentation (Swagger)
+</details>
+
+<details><summary>API Documentation (Swagger)</summary>
 
 - [x] Add OpenAPI for dev environment (`.AddSwaggerGen`)
 - [x] Restrict Swagger UI to development environment
 - [x] Add Swagger metadata (`.SwaggerDoc`: title, version, description, contact)
 - [x] Enable XML comments for automatic endpoint documentation (csproj)
-- [ ] Document all endpoints with XML comments
+- [x] Document all endpoints with XML comments
 - [x] Move Swagger UI to /docs for clarity
 - [ ] Harden Swagger for production (protect route / authorization)
 - [ ] Optionally publish Swagger JSON to CI/CD artifacts for API client generation
 
-### Nice to Have
+</details>
+
+<details><summary>Nice to Have</summary>
 
 - [x] Add versioning note (`/api/v1/...`)
 - [ ] Add example `curl` requests to README
 - [ ] Add notes on assumptions (in-memory only, no persistence, not thread-safe for prod)
 
-## Initial setup done
+</details>
 
-This is only for Descartes' reference, and would usually not be a part of the repository.
+## Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- .NET 8 SDK – for local development and running tests
+- Docker + Docker Compose – for containerized environments
+- GNU Make – to run project commands
+
+### Usage
+
+Run commands with
 
 ```bash
+make <command>
+```
+
+To list all commands, just run
+
+```bash
+make
+```
+
+### Local Development
+
+Runs the API directly on your machine (not dockerized).
+If you choose the Postgres backend, a Postgres container will be started automatically.
+
+| Command | Description |
+| - | - |
+| make serve-inmemory | Run the API with an in-memory database |
+| make test-inmemory | Run tests using an in-memory database |
+| make serve-inmemory | Run the API with SQLite |
+| make test-inmemory | Run tests using SQLite |
+| make serve-inmemory | Run the API with Dockerized Postgres |
+| make test-inmemory | Run tests using Dockerized Postgres |
+
+### Docker Workflow
+
+Runs the API and dependencies fully inside Docker containers.
+Separate containers are used for development and testing.
+
+| Command | Description |
+| - | - |
+| make up | Start the full Docker stack |
+| make up-build | Build and start all services |
+| make build | Rebuild the API image (no cache) |
+| make down | Stop containers |
+| make logs | Tail container logs |
+| make bash | Open a shell in the API container |
+| make list | List active containers |
+
+### Maintenance & Utilities
+
+Utility commands for rebuilding, formatting, and database resets.
+All run within the Dockerized environment unless otherwise noted.
+
+| Command | Description |
+| - | - |
+| make test | Run the full test suite inside the dev container |
+| make lint | Check code formatting |
+| make lint-fix | Auto-fix code formatting |
+| make refresh | Rebuild and restart stack (no cache) |
+| make refresh-full | Rebuild everything and clear volumes |
+| make reset-db | Reset Postgres database volume |
+
+## Initial setup done
+
+<details>
+<summary>This is only for Descartes' reference, and would usually not be a part of the repository.</summary>
+
+<pre>
 ➜  ~ cd dev/github.com/mathmul/
 ➜  mathmul dotnet --version
 8.0.414
@@ -247,4 +343,5 @@ info: Microsoft.Hosting.Lifetime[0]
       Hosting environment: Development
 info: Microsoft.Hosting.Lifetime[0]
       Content root path: /Users/s3c/dev/github.com/mathmul/diff-ergo-sum/DiffErgoSum
-```
+</pre>
+</details>
