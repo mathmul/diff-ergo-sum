@@ -4,7 +4,7 @@
 ## Get latest from `dotnet new gitignore`
 
 # dotenv files
-.env
+.env.local
 
 # User-specific files
 *.rsuser
@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Docker
+compose.override.y[a]ml
