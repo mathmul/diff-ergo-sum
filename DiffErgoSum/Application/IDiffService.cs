@@ -8,6 +8,6 @@ using DiffErgoSum.Core;
 /// </summary>
 public interface IDiffService
 {
-    public Task UploadAsync(int id, string side, string base64);
+    public Task UploadAsync(int id, DiffPart part, string base64);
     public Task<DiffResult> CompareAsync(int id);
 }

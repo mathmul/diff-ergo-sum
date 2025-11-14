@@ -2,6 +2,7 @@ namespace DiffErgoSum.Api.Controllers;
 
 using DiffErgoSum.Api.Models;
 using DiffErgoSum.Application;
+using DiffErgoSum.Core;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,10 +31,10 @@ public class DiffController : ControllerBase
     }
 
     /// <summary>
-    /// Uploads the left side of the diff pair.
+    /// Uploads one side of the diff pair.
     /// </summary>
     /// <param name="id">The diff identifier.</param>
-    /// <param name="side">The side to upload ("left" or "right").</param>
+    /// <param name="part">Which side to upload (Left or Right).</param>
     /// <param name="request">The request body containing the Base64-encoded data.</param>
     /// <returns>
     /// <list type="bullet">
@@ -42,14 +43,14 @@ public class DiffController : ControllerBase
     /// <item><description><see cref="StatusCodes.Status422UnprocessableEntity"/> if <c>data</c> is syntactically valid but not decodable Base64.</description></item>
     /// </list>
     /// </returns>
-    [HttpPut("{side:regex(^left$|^right$)}")]
+    [HttpPut("{part}")]
     [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UploadAsync(int id, string side, [FromBody] DiffRequest request)
+    public async Task<IActionResult> UploadAsync(int id, DiffPart part, [FromBody] DiffRequest request)
     {
-        await _service.UploadAsync(id, side, request.Data);
+        await _service.UploadAsync(id, part, request.Data);
         return Created(string.Empty, null);
     }
 

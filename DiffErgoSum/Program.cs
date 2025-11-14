@@ -7,6 +7,8 @@ using DiffErgoSum.Infrastructure;
 using DiffErgoSum.Middleware;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,12 @@ builder.Services.AddSwaggerGen(c =>
             Name = "@mathmul",
             Url = new Uri("https://github.com/mathmul/diff-ergo-sum")
         }
+    });
+
+    c.MapType<DiffPart>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Enum = [.. Enum.GetNames(typeof(DiffPart)).Select(n => new OpenApiString(n.ToLower()))]
     });
 });
 builder.Services.AddTransient<IDiffService, DiffService>();

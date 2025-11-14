@@ -15,15 +15,17 @@ public class DiffService : IDiffService
         _repo = repo;
     }
 
-    public async Task UploadAsync(int id, string side, string base64)
+    public Task UploadAsync(int id, DiffPart part, string base64)
     {
         if (!Base64.IsValid(base64))
             throw new InvalidBase64HttpException();
 
-        if (side == "left")
-            await _repo.SaveLeftAsync(id, base64);
-        else
-            await _repo.SaveRightAsync(id, base64);
+        return part switch
+        {
+            DiffPart.Left => _repo.SaveLeftAsync(id, base64),
+            DiffPart.Right => _repo.SaveRightAsync(id, base64),
+            _ => throw new ArgumentOutOfRangeException(nameof(part))
+        };
     }
 
     public async Task<DiffResult> CompareAsync(int id)
