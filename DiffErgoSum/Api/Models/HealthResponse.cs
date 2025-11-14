@@ -6,4 +6,4 @@ namespace DiffErgoSum.Api.Models;
 /// <remarks>
 /// Returned by <c>GET /api/health</c> to indicate the service is alive.
 /// </remarks>
-public record HealthResponse(bool Ok = true) : ApiResponse();
+public record HealthResponse(bool Ok = true);

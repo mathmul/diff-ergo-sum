@@ -11,4 +11,4 @@ using System.Text.Json.Serialization;
 public record DiffResponse(
     [property: JsonPropertyName("diffResultType")] string DiffResultType,
     [property: JsonPropertyName("diffs")] List<DiffResponseSegmentDto>? Diffs
-) : ApiResponse();
+);

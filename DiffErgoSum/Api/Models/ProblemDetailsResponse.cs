@@ -14,7 +14,7 @@ public record ProblemDetailsResponse(
     [property: JsonPropertyName("status")] int Status,
     [property: JsonPropertyName("detail")] string? Detail = null,
     [property: JsonPropertyName("instance")] string? Instance = null
-) : ApiResponse
+)
 {
     // Optional extensions (RFC 9457 §3.2)
     // Optional extensions (RFC 9457 §3.2)
