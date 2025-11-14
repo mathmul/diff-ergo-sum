@@ -1,11 +1,7 @@
 namespace DiffErgoSum.Controllers;
 
-using System.Buffers.Text;
-
 using DiffErgoSum.Application;
-using DiffErgoSum.Controllers.Exceptions;
 using DiffErgoSum.Controllers.Models;
-using DiffErgoSum.Domain;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,12 +22,10 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/v1/diff/{id}")]
 public class DiffController : ControllerBase
 {
-    private readonly IDiffRepository _repo;
     private readonly IDiffService _service;
 
-    public DiffController(IDiffRepository repo, IDiffService service)
+    public DiffController(IDiffService service)
     {
-        _repo = repo;
         _service = service;
     }
 
@@ -54,10 +48,7 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadLeftAsync(int id, [FromBody] DiffRequest request)
     {
-        if (!Base64.IsValid(request.Data))
-            throw new InvalidBase64HttpException();
-
-        await _repo.SaveLeftAsync(id, request.Data);
+        await _service.UploadAsync(id, "left", request.Data);
         return Created(string.Empty, null);
     }
 
@@ -80,10 +71,7 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadRightAsync(int id, [FromBody] DiffRequest request)
     {
-        if (!Base64.IsValid(request.Data))
-            throw new InvalidBase64HttpException();
-
-        await _repo.SaveRightAsync(id, request.Data);
+        await _service.UploadAsync(id, "right", request.Data);
         return Created(string.Empty, null);
     }
 
@@ -104,14 +92,7 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetDiffAsync(int id)
     {
-        var pair = await _repo.GetAsync(id);
-        if (pair is null || string.IsNullOrEmpty(pair.Value.Left) || string.IsNullOrEmpty(pair.Value.Right))
-            throw new DiffNotFoundHttpException(id);
-
-        var leftBytes = Convert.FromBase64String(pair.Value.Left);
-        var rightBytes = Convert.FromBase64String(pair.Value.Right);
-
-        var result = _service.Compare(leftBytes, rightBytes);
+        var result = await _service.CompareAsync(id);
 
         var response = new DiffResponse(
             result.Type.ToString(),

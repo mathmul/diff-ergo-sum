@@ -8,9 +8,6 @@ using DiffErgoSum.Domain;
 /// </summary>
 public interface IDiffService
 {
-    /// <summary>
-    /// Compares two byte arrays and returns a <see cref="DiffResult"/>
-    /// describing their relationship (equal, size mismatch, or differing segments).
-    /// </summary>
-    DiffResult Compare(byte[] left, byte[] right);
+    public Task UploadAsync(int id, string side, string base64);
+    public Task<DiffResult> CompareAsync(int id);
 }
