@@ -33,6 +33,7 @@ public class DiffController : ControllerBase
     /// Uploads the left side of the diff pair.
     /// </summary>
     /// <param name="id">The diff identifier.</param>
+    /// <param name="side">The side to upload ("left" or "right").</param>
     /// <param name="request">The request body containing the Base64-encoded data.</param>
     /// <returns>
     /// <list type="bullet">
@@ -41,37 +42,14 @@ public class DiffController : ControllerBase
     /// <item><description><see cref="StatusCodes.Status422UnprocessableEntity"/> if <c>data</c> is syntactically valid but not decodable Base64.</description></item>
     /// </list>
     /// </returns>
-    [HttpPut("left")]
+    [HttpPut("{side:regex(^left$|^right$)}")]
     [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UploadLeftAsync(int id, [FromBody] DiffRequest request)
+    public async Task<IActionResult> UploadAsync(int id, string side, [FromBody] DiffRequest request)
     {
-        await _service.UploadAsync(id, "left", request.Data);
-        return Created(string.Empty, null);
-    }
-
-    /// <summary>
-    /// Uploads the right side of the diff pair.
-    /// </summary>
-    /// <param name="id">The diff identifier.</param>
-    /// <param name="request">The request body containing the Base64-encoded data.</param>
-    /// <returns>
-    /// <list type="bullet">
-    /// <item><description><see cref="StatusCodes.Status201Created"/> if successfully stored.</description></item>
-    /// <item><description><see cref="StatusCodes.Status400BadRequest"/> if model validation fails (missing or malformed JSON).</description></item>
-    /// <item><description><see cref="StatusCodes.Status422UnprocessableEntity"/> if <c>data</c> is syntactically valid but not decodable Base64.</description></item>
-    /// </list>
-    /// </returns>
-    [HttpPut("right")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UploadRightAsync(int id, [FromBody] DiffRequest request)
-    {
-        await _service.UploadAsync(id, "right", request.Data);
+        await _service.UploadAsync(id, side, request.Data);
         return Created(string.Empty, null);
     }
 
