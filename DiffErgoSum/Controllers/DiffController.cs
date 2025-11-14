@@ -1,10 +1,11 @@
 namespace DiffErgoSum.Controllers;
 
+using System.Buffers.Text;
+
 using DiffErgoSum.Application;
 using DiffErgoSum.Controllers.Exceptions;
 using DiffErgoSum.Controllers.Models;
 using DiffErgoSum.Domain;
-using DiffErgoSum.Domain.Validators;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,7 +54,7 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
     public IActionResult UploadLeft(int id, [FromBody] DiffRequest request)
     {
-        if (!Base64Validator.IsValid(request.Data))
+        if (!Base64.IsValid(request.Data))
             throw new InvalidBase64HttpException();
 
         _repo.SaveLeft(id, request.Data);
@@ -79,7 +80,7 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
     public IActionResult UploadRight(int id, [FromBody] DiffRequest request)
     {
-        if (!Base64Validator.IsValid(request.Data))
+        if (!Base64.IsValid(request.Data))
             throw new InvalidBase64HttpException();
 
         _repo.SaveRight(id, request.Data);
