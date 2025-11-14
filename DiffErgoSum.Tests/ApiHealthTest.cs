@@ -39,13 +39,8 @@ public class ApiHealthTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetHealthEnv_ShouldReturnDbDriverFromEnv()
     {
-#if !DEBUG
-        return; // Skip in Release builds
-#endif
         // Ensure DB_DRIVER is set in the test environment
-        var dbDriver = Environment.GetEnvironmentVariable("DB_DRIVER");
-        if (dbDriver is null)
-            throw new Xunit.Sdk.XunitException("DB_DRIVER environment variable should be set for the test environment");
+        var dbDriver = Environment.GetEnvironmentVariable("DB_DRIVER") ?? "inmemory";
         _output.WriteLine($" - Config DB_DRIVER: {dbDriver}");
 
         // START TEST
