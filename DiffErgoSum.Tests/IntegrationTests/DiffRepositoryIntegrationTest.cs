@@ -19,7 +19,7 @@ public class DiffRepositoryIntegrationTest
     }
 
     [Fact]
-    public void PostgresRepository_ShouldInsertAndRetrieveData()
+    public async Task PostgresRepository_ShouldInsertAndRetrieveData()
     {
         var dbDriver = Environment.GetEnvironmentVariable("DB_DRIVER") ?? "inmemory";
         if (dbDriver != "postgres")
@@ -56,10 +56,10 @@ public class DiffRepositoryIntegrationTest
         const string right = "V29ybGQ=";  // base64(World)
 
         // Act
-        repo.SaveLeft(diffId, left);
-        repo.SaveRight(diffId, right);
+        await repo.SaveLeftAsync(diffId, left);
+        await repo.SaveRightAsync(diffId, right);
 
-        var result = repo.Get(diffId);
+        var result = await repo.GetAsync(diffId);
 
         // Assert
         Assert.NotNull(result);

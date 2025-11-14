@@ -52,12 +52,12 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
-    public IActionResult UploadLeft(int id, [FromBody] DiffRequest request)
+    public async Task<IActionResult> UploadLeftAsync(int id, [FromBody] DiffRequest request)
     {
         if (!Base64.IsValid(request.Data))
             throw new InvalidBase64HttpException();
 
-        _repo.SaveLeft(id, request.Data);
+        await _repo.SaveLeftAsync(id, request.Data);
         return Created(string.Empty, null);
     }
 
@@ -78,12 +78,12 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
-    public IActionResult UploadRight(int id, [FromBody] DiffRequest request)
+    public async Task<IActionResult> UploadRightAsync(int id, [FromBody] DiffRequest request)
     {
         if (!Base64.IsValid(request.Data))
             throw new InvalidBase64HttpException();
 
-        _repo.SaveRight(id, request.Data);
+        await _repo.SaveRightAsync(id, request.Data);
         return Created(string.Empty, null);
     }
 
@@ -102,10 +102,10 @@ public class DiffController : ControllerBase
     [ProducesResponseType(typeof(DiffResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetailsResponse), StatusCodes.Status500InternalServerError)]
-    public IActionResult GetDiff(int id)
+    public async Task<IActionResult> GetDiffAsync(int id)
     {
-        var pair = _repo.Get(id);
-        if (pair == null || string.IsNullOrEmpty(pair.Value.Left) || string.IsNullOrEmpty(pair.Value.Right))
+        var pair = await _repo.GetAsync(id);
+        if (pair is null || string.IsNullOrEmpty(pair.Value.Left) || string.IsNullOrEmpty(pair.Value.Right))
             throw new DiffNotFoundHttpException(id);
 
         var leftBytes = Convert.FromBase64String(pair.Value.Left);

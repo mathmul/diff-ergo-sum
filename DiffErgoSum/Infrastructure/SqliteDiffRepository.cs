@@ -15,46 +15,41 @@ public class SqliteDiffRepository : IDiffRepository
         _context.Database.EnsureCreated();
     }
 
-    public void SaveLeft(int id, string base64Data)
+    public async Task SaveLeftAsync(int id, string base64Data)
     {
-        var entity = _context.Diffs.Find(id);
-        if (entity == null)
+        var entity = await _context.Diffs.FindAsync(id);
+        if (entity is null)
         {
             entity = new DiffEntity { Id = id, Left = base64Data };
-            _context.Diffs.Add(entity);
+            await _context.Diffs.AddAsync(entity);
         }
         else
         {
             entity.Left = base64Data;
-            _context.Diffs.Update(entity);
         }
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void SaveRight(int id, string base64Data)
+    public async Task SaveRightAsync(int id, string base64Data)
     {
-        var entity = _context.Diffs.Find(id);
-        if (entity == null)
+        var entity = await _context.Diffs.FindAsync(id);
+        if (entity is null)
         {
             entity = new DiffEntity { Id = id, Right = base64Data };
-            _context.Diffs.Add(entity);
+            await _context.Diffs.AddAsync(entity);
         }
         else
         {
             entity.Right = base64Data;
-            _context.Diffs.Update(entity);
         }
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public (string? Left, string? Right)? Get(int id)
+    public async Task<(string? Left, string? Right)?> GetAsync(int id)
     {
-        var entity = _context.Diffs.AsNoTracking().FirstOrDefault(e => e.Id == id);
-        if (entity is null)
-            return null;
-
-        return (entity.Left, entity.Right);
+        var entity = await _context.Diffs.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+        return entity is null ? null : (entity.Left, entity.Right);
     }
 }
