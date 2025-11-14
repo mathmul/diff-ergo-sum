@@ -2,9 +2,7 @@ namespace DiffErgoSum.Infrastructure;
 
 using System.Collections.Concurrent;
 
-using DiffErgoSum.Domain;
-
-using Microsoft.AspNetCore.Http.HttpResults;
+using DiffErgoSum.Core;
 
 public class InMemoryDiffRepository : IDiffRepository
 {

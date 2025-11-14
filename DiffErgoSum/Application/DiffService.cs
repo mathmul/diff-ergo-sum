@@ -3,8 +3,8 @@ namespace DiffErgoSum.Application;
 using System.Buffers.Text;
 using System.Collections.Generic;
 
-using DiffErgoSum.Controllers.Exceptions;
-using DiffErgoSum.Domain;
+using DiffErgoSum.Api.Exceptions;
+using DiffErgoSum.Core;
 
 public class DiffService : IDiffService
 {

@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Controllers.Exceptions;
+namespace DiffErgoSum.Api.Exceptions;
 
 public sealed class DiffNotFoundHttpException(int id) : HttpException(
     statusCode: StatusCodes.Status404NotFound,

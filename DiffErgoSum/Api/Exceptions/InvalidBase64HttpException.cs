@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Controllers.Exceptions;
+namespace DiffErgoSum.Api.Exceptions;
 
 public sealed class InvalidBase64HttpException() : HttpException(
     statusCode: StatusCodes.Status422UnprocessableEntity,

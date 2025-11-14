@@ -2,8 +2,8 @@ namespace DiffErgoSum.Middleware;
 
 using System.Net;
 
-using DiffErgoSum.Controllers.Exceptions;
-using DiffErgoSum.Controllers.Models;
+using DiffErgoSum.Api.Exceptions;
+using DiffErgoSum.Api.Models;
 
 public class ErrorHandlingMiddleware
 {

@@ -3,7 +3,7 @@
 // using System.Text;
 
 // using DiffErgoSum.Application;
-// using DiffErgoSum.Domain;
+// using DiffErgoSum.Core;
 
 // public class DiffServiceTests
 // {

@@ -1,8 +1,8 @@
 using System.Reflection;
 
+using DiffErgoSum.Api.Filters;
 using DiffErgoSum.Application;
-using DiffErgoSum.Controllers.Filters;
-using DiffErgoSum.Domain;
+using DiffErgoSum.Core;
 using DiffErgoSum.Infrastructure;
 using DiffErgoSum.Middleware;
 

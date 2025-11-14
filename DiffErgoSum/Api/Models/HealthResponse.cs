@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Controllers.Models;
+namespace DiffErgoSum.Api.Models;
 
 /// <summary>
 /// Represents a simple API health check response.

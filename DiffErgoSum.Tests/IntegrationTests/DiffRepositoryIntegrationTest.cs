@@ -1,8 +1,6 @@
 namespace DiffErgoSum.Tests.IntegrationTests;
 
-using DiffErgoSum.Domain;
 using DiffErgoSum.Infrastructure;
-using DiffErgoSum.Infrastructure.Entities;
 
 using Microsoft.EntityFrameworkCore;
 

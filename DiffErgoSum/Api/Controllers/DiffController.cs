@@ -1,7 +1,7 @@
-namespace DiffErgoSum.Controllers;
+namespace DiffErgoSum.Api.Controllers;
 
+using DiffErgoSum.Api.Models;
 using DiffErgoSum.Application;
-using DiffErgoSum.Controllers.Models;
 
 using Microsoft.AspNetCore.Mvc;
 

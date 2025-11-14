@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Controllers.Models;
+namespace DiffErgoSum.Api.Models;
 
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;

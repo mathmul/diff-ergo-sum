@@ -1,6 +1,6 @@
-namespace DiffErgoSum.Controllers.Filters;
+namespace DiffErgoSum.Api.Filters;
 
-using DiffErgoSum.Controllers.Models;
+using DiffErgoSum.Api.Models;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

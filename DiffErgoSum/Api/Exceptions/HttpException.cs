@@ -1,8 +1,8 @@
-namespace DiffErgoSum.Controllers.Exceptions;
+namespace DiffErgoSum.Api.Exceptions;
 
 using System;
 
-using DiffErgoSum.Controllers.Models;
+using DiffErgoSum.Api.Models;
 
 /// <summary>
 /// Base class for HTTP exceptions with specific status codes and error details.
