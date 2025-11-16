@@ -1,6 +1,6 @@
 namespace DiffErgoSum.Infrastructure;
 
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Repositories;
 using DiffErgoSum.Infrastructure.Entities;
 
 using Microsoft.EntityFrameworkCore;

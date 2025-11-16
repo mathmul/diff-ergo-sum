@@ -2,7 +2,8 @@ namespace DiffErgoSum.Tests;
 
 using System.Text;
 
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Algorithms;
+using DiffErgoSum.Core.Enums;
 
 public class DiffAlgorithmTests
 {

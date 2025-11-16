@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Core;
+namespace DiffErgoSum.Core.Enums;
 
 /// <summary>
 /// Indicates which side of a diff pair is being uploaded.

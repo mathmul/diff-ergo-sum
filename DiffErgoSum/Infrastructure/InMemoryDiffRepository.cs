@@ -2,7 +2,7 @@ namespace DiffErgoSum.Infrastructure;
 
 using System.Collections.Concurrent;
 
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Repositories;
 
 public class InMemoryDiffRepository : IDiffRepository
 {

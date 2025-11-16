@@ -2,7 +2,7 @@ namespace DiffErgoSum.Api.Controllers;
 
 using DiffErgoSum.Api.Models;
 using DiffErgoSum.Application;
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Enums;
 
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Core;
+namespace DiffErgoSum.Core.Models;
 
 public class DiffSegment
 {

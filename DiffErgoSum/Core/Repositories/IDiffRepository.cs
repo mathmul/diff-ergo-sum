@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Core;
+namespace DiffErgoSum.Core.Repositories;
 
 public interface IDiffRepository
 {

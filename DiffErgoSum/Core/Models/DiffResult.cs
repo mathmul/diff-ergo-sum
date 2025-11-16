@@ -1,4 +1,6 @@
-namespace DiffErgoSum.Core;
+namespace DiffErgoSum.Core.Models;
+
+using DiffErgoSum.Core.Enums;
 
 public class DiffResult
 {

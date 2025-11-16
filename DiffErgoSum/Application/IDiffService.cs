@@ -1,6 +1,7 @@
 namespace DiffErgoSum.Application;
 
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Enums;
+using DiffErgoSum.Core.Models;
 
 /// <summary>
 /// Defines the contract for comparing two decoded byte arrays and

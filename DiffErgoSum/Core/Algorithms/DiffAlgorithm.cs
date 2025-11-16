@@ -1,4 +1,7 @@
-namespace DiffErgoSum.Core;
+namespace DiffErgoSum.Core.Algorithms;
+
+using DiffErgoSum.Core.Enums;
+using DiffErgoSum.Core.Models;
 
 public static class DiffAlgorithm
 {

@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Core;
+namespace DiffErgoSum.Core.Enums;
 
 using System.Text.Json.Serialization;
 
