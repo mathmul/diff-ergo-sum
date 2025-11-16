@@ -2,10 +2,12 @@ using System.Reflection;
 
 using DiffErgoSum.Api.Filters;
 using DiffErgoSum.Application;
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Enums;
+using DiffErgoSum.Core.Repositories;
 using DiffErgoSum.Infrastructure;
 using DiffErgoSum.Middleware;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -21,6 +23,10 @@ var dbDriver = builder.Configuration["DB_DRIVER"] ?? "inmemory";
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
+});
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

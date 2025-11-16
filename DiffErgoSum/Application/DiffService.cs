@@ -1,10 +1,10 @@
 namespace DiffErgoSum.Application;
 
-using System.Buffers.Text;
-using System.Collections.Generic;
-
 using DiffErgoSum.Api.Exceptions;
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Algorithms;
+using DiffErgoSum.Core.Enums;
+using DiffErgoSum.Core.Models;
+using DiffErgoSum.Core.Repositories;
 
 public class DiffService : IDiffService
 {
@@ -17,9 +17,6 @@ public class DiffService : IDiffService
 
     public Task UploadAsync(int id, DiffPart part, string base64)
     {
-        if (!Base64.IsValid(base64))
-            throw new InvalidBase64HttpException();
-
         return part switch
         {
             DiffPart.Left => _repo.SaveLeftAsync(id, base64),

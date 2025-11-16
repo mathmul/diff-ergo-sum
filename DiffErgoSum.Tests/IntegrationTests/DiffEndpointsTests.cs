@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-using DiffErgoSum.Core;
+using DiffErgoSum.Core.Repositories;
 using DiffErgoSum.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -44,13 +44,13 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task PutLeft_WithInvalidCharacters_ShouldReturn400BadRequest()
+    public async Task PutLeft_WithInvalidCharacters_ShouldReturn422UnprocessableEntity()
     {
         var id = 103;
         var payload = new { data = "@@@===" }; // Illegal Base64 characters
         var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/left", payload);
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal(422, json.GetProperty("status").GetInt32());
         Assert.Equal("Invalid Base64 Input", json.GetProperty("title").GetString());
-        Assert.Equal("Provided data is not valid Base64.", json.GetProperty("detail").GetString());
+        Assert.Equal("Value is not valid Base64.", json.GetProperty("detail").GetString());
     }
 
     [Fact]
@@ -90,13 +90,13 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task PutRight_WithInvalidCharacters_ShouldReturn400BadRequest()
+    public async Task PutRight_WithInvalidCharacters_ShouldReturn422UnprocessableEntity()
     {
         var id = 203;
         var payload = new { data = "@@@===" }; // Illegal Base64 characters
         var response = await _client.PutAsJsonAsync($"/api/v1/diff/{id}/right", payload);
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class DiffEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal(422, json.GetProperty("status").GetInt32());
         Assert.Equal("Invalid Base64 Input", json.GetProperty("title").GetString());
-        Assert.Equal("Provided data is not valid Base64.", json.GetProperty("detail").GetString());
+        Assert.Equal("Value is not valid Base64.", json.GetProperty("detail").GetString());
     }
 
     [Fact]

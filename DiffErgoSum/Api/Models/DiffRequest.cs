@@ -3,6 +3,8 @@ namespace DiffErgoSum.Api.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
+using DiffErgoSum.Api.Validation;
+
 /// <summary>
 /// Represents the request body for uploading one side of a diff (left or right).
 /// </summary>
@@ -12,7 +14,7 @@ using System.Text.Json.Serialization;
 /// </remarks>
 public record DiffRequest(
     [property: Required]
-    [property: RegularExpression(@"^[A-Za-z0-9+/=]+$", ErrorMessage = "Provided data is not valid Base64.")]
+    [property: ValidBase64]
     [property: JsonPropertyName("data")]
     string Data
 )
