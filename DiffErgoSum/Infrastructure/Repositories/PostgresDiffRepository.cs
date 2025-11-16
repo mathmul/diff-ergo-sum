@@ -1,15 +1,15 @@
-namespace DiffErgoSum.Infrastructure;
+namespace DiffErgoSum.Infrastructure.Repositories;
 
 using DiffErgoSum.Core.Repositories;
 using DiffErgoSum.Infrastructure.Entities;
 
 using Microsoft.EntityFrameworkCore;
 
-public class SqliteDiffRepository : IDiffRepository
+public class PostgresDiffRepository : IDiffRepository
 {
     private readonly DiffDbContext _context;
 
-    public SqliteDiffRepository(DiffDbContext context)
+    public PostgresDiffRepository(DiffDbContext context)
     {
         _context = context;
         _context.Database.EnsureCreated();
@@ -27,7 +27,6 @@ public class SqliteDiffRepository : IDiffRepository
         {
             entity.Left = base64Data;
         }
-
         await _context.SaveChangesAsync();
     }
 
@@ -43,7 +42,6 @@ public class SqliteDiffRepository : IDiffRepository
         {
             entity.Right = base64Data;
         }
-
         await _context.SaveChangesAsync();
     }
 

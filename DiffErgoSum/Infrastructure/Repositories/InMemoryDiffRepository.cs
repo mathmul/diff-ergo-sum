@@ -1,4 +1,4 @@
-namespace DiffErgoSum.Infrastructure;
+namespace DiffErgoSum.Infrastructure.Repositories;
 
 using System.Collections.Concurrent;
 

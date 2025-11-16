@@ -1,6 +1,7 @@
 namespace DiffErgoSum.Tests.IntegrationTests;
 
 using DiffErgoSum.Infrastructure;
+using DiffErgoSum.Infrastructure.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 

@@ -5,6 +5,7 @@ using DiffErgoSum.Application;
 using DiffErgoSum.Core.Enums;
 using DiffErgoSum.Core.Repositories;
 using DiffErgoSum.Infrastructure;
+using DiffErgoSum.Infrastructure.Repositories;
 using DiffErgoSum.Middleware;
 
 using Microsoft.AspNetCore.Mvc;
@@ -20,14 +21,8 @@ var dbDriver = builder.Configuration["DB_DRIVER"] ?? "inmemory";
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ValidationFilter>();
-});
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.SuppressModelStateInvalidFilter = true;
-});
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
